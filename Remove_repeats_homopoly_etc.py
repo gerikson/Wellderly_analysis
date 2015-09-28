@@ -328,12 +328,7 @@ def main(chrom):
 			overlapRep = repeatOverlap.main()
 			if overlapRep:
 				repeat_counter += 1
-				#filter_block = filter_block + "\tYES\t\t\t\t\n"
 				continue
-			else:
-				block = block + line
-				good_lines += 1
-				#filter_block = filter_block + "\t"
 			
 
 			#ADD micrositelites
@@ -341,25 +336,14 @@ def main(chrom):
 			overlapMicro = microOverlap.main()
 			if overlapMicro:
 				microsat_counter += 1
-				#filter_block = filter_block + "\tYES\t\t\t\n"
 				continue
-			
-			else:
-				block = block + line
-				good_lines += 1
-				#filter_block = filter_block + "\t"
 			
 			#Add homopolymers
 			homoOverlap = Overlap(begin, homopolymers_begin, end, homopolymers_end)
 			overlapHomo = homoOverlap.main()
 			if overlapHomo:
 				homo_counter += 1
-				#filter_block = filter_block + "\tYES\t\t\n"
 				continue
-			else:
-				block = block + line
-				good_lines += 1
-				#filter_block = filter_block + "\t"
 
 
 			#Add SegmentalDup
@@ -367,25 +351,18 @@ def main(chrom):
 			overlapSeg = segOverlap.main()
 			if overlapSeg:
 				segDup_counter += 1
-				#filter_block = filter_block + "\tYES\t\n"
 				continue
-			else:
-				#filter_block = filter_block + "\t"
-				block = block + line
-				good_lines += 1
+
 
 			#Add RepeatMask
 			repOverlap = Overlap(begin, repeatMask_begin, end, repeatMask_end)
 			overlapRep = repOverlap.main()
 			if overlapRep:
 				repeatMask_counter += 1
-				#filter_block = filter_block + "\tYES\n"
 				continue
-			else:
-				#filter_block = filter_block + "\t\n"
-				block = block + line
-				good_lines += 1
 
+			block = block + line
+			good_lines += 1
 			
 
 	#filt.write(filter_block)
