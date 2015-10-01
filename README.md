@@ -31,9 +31,11 @@ python create_jobs_count_totalVQHIGH_byAF.py
 
 *Count rest of the filters (in the Count_filters folder)
 
+*Remove variants with >10% missing in either wellderly or inova
+python Create_jobs_extract_missing.py
 
-
-
+*Remove variants with coverage <10 or >100
+python  create_jobs_remove_coverage.py
 
 
 

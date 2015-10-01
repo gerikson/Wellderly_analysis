@@ -1,5 +1,5 @@
 """
-Counts variants removed by coverage by AF
+Extract snps of interest
 
 """
 import os, sys, gzip, datetime
@@ -14,6 +14,8 @@ def main(chrom):
 	coverage_file="/gpfs/group/torkamani/bhuvan/wellderly/coverage/CoverageInfo/MediansCompiled/medians_chrm_"+str(ch)+".csv"
 	filter_file ="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly_clustered_repeats_homopoly_etc_missing_cov/filter_wellderly_covereage."+str(chrom)+".txt.gz"
 	
+	zcat filename | 
+
 	f = gzip.open(input_filename)
 	c = open(counter_file, "a")
 	filt = gzip.open(filter_file, "w")

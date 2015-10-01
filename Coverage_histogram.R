@@ -8,5 +8,7 @@ hist(Coverage)
 dev.off()
 q()
 
-
+whiteOnly_wg_and_exome <- read.delim("~/Desktop/Coverage/CG_coverage/whiteOnly_wg_and_exome.txt", header=FALSE)
+hist(whiteOnly_wg_and_exome$V3, main = paste("Whole genome coverage"), xlab="Coverage")
+hist(whiteOnly_wg_and_exome$V4, main = paste("Exome coverage), xlab="Coverage")
 

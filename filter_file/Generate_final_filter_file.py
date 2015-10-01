@@ -413,7 +413,7 @@ def main(chrom):
 				overlapRep = repOverlap.main()
 				if overlapRep:
 					repeatMask_counter += 1
-					final_line = final_line + "\tYES"
+					final_line = final_line + "\tYES\n"
 				else:
 					final_line = final_line + "\t\n"
 

@@ -1,20 +1,30 @@
+"""
+Extract whole genome coverage and exome coverage from CG data
+"""
+
 import os
 import cPickle
 
 Root = '/gpfs/group/stsi/data/projects/wellderly'
 
-output_wg="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/MedianCovereage_wellderly/total_cov_wg_and_exome.txt"
-output_wg="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/MedianCovereage_wellderly/whiteOnly_wg_and_exome.txt"
+output_wg = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/MedianCovereage_wellderly/total_cov_wg_and_exome.txt"
+white_wg = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/MedianCovereage_wellderly/whiteOnly_wg_and_exome.txt"
 whitesfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_inova_withCorrectGenotypes/White_0.95.txt"
 
 outp = open(output_wg, 'w')
-
+outp_wh = open(white_wg, 'w')
+wh = open(whitesfile)
 whites_id = {}
+
 for i in wh:
-	whites_id[i] = "Y"
+	wht = i.split()
+	for j in wht:
+		print "White ID " + j.strip()
+		whites_id[j.strip()] = j.strip()
 
 
 DirecDict = {}
+total_white = 0
 for batchNum in ['01','02','03','04','05','06','07','08','09','10','11']:
 	batchName   = 'batch'+batchNum
 	batchFolder = os.path.join(Root,batchName)
@@ -28,45 +38,37 @@ for batchNum in ['01','02','03','04','05','06','07','08','09','10','11']:
 				#print f
 				t_dir = dirs.split("/")
 				#print t_dir[7] + "\t" + f
-				final_line = t_dir[7] + "\t" + f
-				opfile = open(f)
+				final_line = t_dir[8] + "\t" + f
+				final_file = dirs+"/"+f
+				print final_file
+				#opfile = open(f)
+				opfile = open(final_file)
 
 				for line in opfile:
-					if 'Genome coverage Gross mapping yield (Gb)' in line:
-						final_line = final_line + "\t" + line.strip()
-					if 'Exome coverage  Exome fraction where weightSumSequenceCoverage >= 10x' in line:
-						final_line = final_line + "\t" + line.strip()
-
+					if 'Gross mapping yield' in line:
+						#print line
+						tp = line.split('\t')
+						whole_genome_cov = float(tp[2].strip())/3.2
+						#print str(whole_genome_cov)
+						final_line = final_line + "\t" + str(whole_genome_cov)
+					if 'Exome coverage' in line and 'weightSumSequenceCoverage >= 10x' in line:
+						print line
+						exome_cov = line.split("\t")
+						print exome_cov[2]
+						final_line = final_line + "\t" + exome_cov[2] + "\n"
+				opfile.close()
 				try:
-					#
-					whites_id[t_dir[7]]
+					id_white = t_dir[8].strip()
+					print id_white
+					if whites_id[id_white] == id_white:
+						total_white += total_white
+						outp.write(final_line)
+						outp_wh.write(final_line)
+				except:
+					outp.write(final_line)
 
-				#print dirs
 
-		'''
-		for subdir in subdirs:
-			if 'ASM' == subdir:
-				
-
-				
-				coverageDir = os.path.join(dirs,'REF')
-				temp = coverageDir.split(os.sep)
-
-				didID = temp[8].split('-')[0]
-				asmID = temp[9]
-					
-				print didID	
-				
-				DirecDict[didID] = {}
-				for chrm in range(1,23)+['X','Y','M']:
-
-					coverageFile = 'coverageRefScore-chr'+str(chrm)+'-'+asmID+'.tsv.bz2'
-					coveragePath = os.path.join(coverageDir,coverageFile)
-
-					DirecDict[didID]['chr'+str(chrm)] = coveragePath
-		'''
-
-'''
-with open('coverageFilePaths.pickle','wb') as outp:
-	cPickle.dump(DirecDict,outp)
-'''
+outp.close()
+outp_wh.close()
+print "Total white " + str(total_white)
+print "End!"
