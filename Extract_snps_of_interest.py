@@ -1,266 +1,76 @@
 """
-Extract snps of interest
+Extract snps of interest from vcf file
 
 """
 import os, sys, gzip, datetime
+import subprocess as sp
+#from subprocess import Popen, PIPE
+import shlex
+
+'''
+def run(cmd):
+  """Runs the given command locally and returns the output, err and exit_code."""
+  if "|" in cmd:    
+    cmd_parts = cmd.split('|')
+  else:
+    cmd_parts = []
+    cmd_parts.append(cmd)
+  i = 0
+  p = {}
+  for cmd_part in cmd_parts:
+    cmd_part = cmd_part.strip()
+    if i == 0:
+      p[i]=Popen(shlex.split(cmd_part),stdin=None, stdout=PIPE, stderr=PIPE)
+    else:
+      p[i]=Popen(shlex.split(cmd_part),stdin=p[i-1].stdout, stdout=PIPE, stderr=PIPE)
+    i = i +1
+  (output, err) = p[i-1].communicate()
+  exit_code = p[0].wait()
+
+  return str(output), str(err), exit_code
+'''
 
 
-def main(chrom):
+def main():
 
-	ch = chrom[3:]
-	print "chrom is: " + ch
-	input_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly/wellderly_inova.VQHIGH.0.95white."+str(chrom)+".vcf.gz"
-	counter_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_count_filters/filter_covereage_wellderly.txt"
-	coverage_file="/gpfs/group/torkamani/bhuvan/wellderly/coverage/CoverageInfo/MediansCompiled/medians_chrm_"+str(ch)+".csv"
-	filter_file ="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly_clustered_repeats_homopoly_etc_missing_cov/filter_wellderly_covereage."+str(chrom)+".txt.gz"
 	
-	zcat filename | 
-
-	f = gzip.open(input_filename)
-	c = open(counter_file, "a")
-	filt = gzip.open(filter_file, "w")
-	cov_file = open(coverage_file)
-
-	#Create a dictionary of the covereage
-	covereage = {}
-	print "Start creating dictionary"
-	for i in cov_file:
-		ln = i.split(",")
-		covereage[ln[0]] = ln[1]
-	print "Dictionary created"
-
+	snp_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/desease_snps.txt"
+	output_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/filtered_snps.txt"
+	unfiltered_output="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/unfiltered_snps.txt"
+			
+	snps = open(snp_file)
+	out_filt = open(output_filename, 'w')
+	out_unfilt = open(unfiltered_output, 'w')
 	counter = 0
-	good_lines = 0
-	missing_counter = 0
+	for line in snps:
+		counter += 1
+		print str(counter)
+		tp_line = line.strip().split("\t")
+		chrom = tp_line[1]
+		start_position = tp_line[2]
+		filtered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly_clustered_repeats_homopoly_etc_missing_cov/v1_wellderly_inova.VQHIGH.0.95white.nocluster.repeats.etc.missing.cov.chr"+str(chrom)+".vcf.gz"
+		unfiltered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly/wellderly_inova.VQHIGH.0.95white.chr"+str(chrom)+".vcf.gz"
 
-	well_001 = 0
-	well_005 = 0
-	well_005_plus = 0
+		#check the filtered file first
+		command = "zcat "+filtered_filename
+		p1 = sp.Popen(shlex.split(command), stdout=sp.PIPE)
+		command2 = " awk '{if ($2 == "+start_position+") print $0}'"
+		p2 = sp.Popen(shlex.split(command2) , stdin=p1.stdout, stdout=sp.PIPE)
+		output, error = p2.communicate()
+		out_filt.write(output)
 
-	inova_001 = 0
-	inova_005 = 0
-	inova_005_plus = 0
+		output = ""
+		#check the unfiltered file
+		command = "zcat "+unfiltered_filename
+		p1 = sp.Popen(shlex.split(command), stdout=sp.PIPE)
+		command2 = " awk '{if ($2 == "+start_position+") print $0}'"
+		p2 = sp.Popen(shlex.split(command2) , stdin=p1.stdout, stdout=sp.PIPE)
+		output, error = p2.communicate()
+		out_unfilt.write(output)
 
-	total_wellderly = 0
-	total_inova = 0
-	filt.write("Chrom\tbegin\tRef\tAlt\tMissingFilter\n")
-	filter_block = ""
-	for line in f:
-
-		if line[:2] == "##":
-			print "header"
-		elif line[:1] == "#":
-			tp_line = line.split("\t")
-			for i in tp_line:
-				if i.endswith("DID"):
-					total_wellderly += 1
-				elif i.endswith("ASM"):
-					total_inova += 1
-			print "Total Wellderly " + str(total_wellderly)
-			print "Total inova " + str(total_inova)
-		else:
-
-			counter += 1
-			if counter%100 == 0:
-				filt.write(filter_block)
-				filter_block = ""
-				filt.flush()
-
-			if counter%10000 == 0:
-				print datetime.datetime.now().time()
-				print "total lines " + str(counter)
-				print "Good lines " + str(good_lines)
-				sys.stdout.flush()
-
-
-			tp_line = line.strip().split()
-			filter_block = filter_block + tp_line[0]+"\t"+tp_line[1]+"\t"+tp_line[3]+"\t"+tp_line[4]
-			
-			pos = tp_line[1] + "_" + str(len(tp_line[3]))
-			
-			#Extract the coverage from the dictionary
-			cov = "0.0"
-			try:
-				cov = covereage[pos]
-			except:
-				print "coverage not found"
-				print tp_line[:5]
-
-
-			if float(cov) < 10.0 or float(cov) > 100.0:
-
-				filter_block = filter_block + "\tYES\n" 
-
-				missing_counter += 1
-
-				alleles = tp_line[4].split(",")
-
-				total_well_alleles = 0
-				total_inova_alleles = 0
-				total_well_alt = 0
-				total_inova_alt = 0
-				dict_of_alleles_well={}
-				dict_of_alleles_inova={}
-
-				well_AF = 0
-				inova_AF = 0
-				if len(alleles) > 1:
-					#print "len alleles > 1"
-					#create a dictionary that would count the number of alleles
-					for index, i in enumerate(alleles):
-						#add one to the index, alleles start at 1
-						ind = index + 1
-						dict_of_alleles_well[ind] = 0
-						dict_of_alleles_inova[ind] = 0
-
-
-				for index, gen in enumerate(tp_line[9:]):
-					index = index + 9
-					if len(alleles) == 1:
-						#tp_gen = gen[:3]
-						#First Allele
-						if gen[0] == "0":
-							if index < 529:
-								total_well_alleles += 1
-							else:
-								total_inova_alleles += 1
-						elif gen[0] == "1":
-							if index < 529:
-								total_well_alleles += 1
-								total_well_alt +=1
-							else:
-								total_inova_alleles += 1
-								total_inova_alt +=1
-						#Second Allele
-						if gen[2] == "0":
-							if index < 529:
-								total_well_alleles += 1
-							else:
-								total_inova_alleles += 1
-						elif gen[2] == "1":
-							if index < 529:
-								total_well_alleles += 1
-								total_well_alt +=1
-							else:
-								total_inova_alleles += 1
-								total_inova_alt +=1
-					
-					else:
-						#print "Multi alleles"
-						#First Allele
-						if gen[0] != ".":
-							if gen[0] == "0":
-								if index < 529:
-									total_well_alleles += 1
-								else:
-									total_inova_alleles += 1
-							
-							else:
-
-								if index < 529:
-									total_well_alleles += 1
-									#Increment the dictionary value for that allele
-									try:
-										dict_of_alleles_well[int(gen[0])] +=1
-									except:
-										print "gen[0] " + str(gen[0])
-										print "alleles " + tp_line[4]
-								else:
-									total_inova_alleles += 1
-									try:
-										dict_of_alleles_inova[int(gen[0])] +=1
-									except:
-										print "gen[0] " + str(gen[0])
-										print "alleles " + tp_line[4]
-
-						#Second Allele
-						if gen[2] != ".":
-							if gen[2] == "0":
-								if index < 529:
-									total_well_alleles += 1
-								else:
-									total_inova_alleles += 1
-							else:
-								if index < 529:
-									total_well_alleles += 1
-									#Increment the dictionary value for that allele
-									try:
-										dict_of_alleles_well[int(gen[2])] +=1
-									except:
-										print "gen[0] " + str(gen[2])
-										print "alleles " + tp_line[4]
-								else:
-									total_inova_alleles += 1
-									try:
-										dict_of_alleles_inova[int(gen[2])] +=1
-									except:
-										print "gen[0] " + str(gen[2])
-										print "alleles " + tp_line[4]
-
-						inova_max_value = max(dict_of_alleles_inova.values())
-						well_max_value = max(dict_of_alleles_well.values())
-
-				try:
-					if len(alleles) == 1:
-						well_AF = float(total_well_alt)/float(total_well_alleles)
-					else:
-						# For multi allelic values remove the highest AF from 1
-						well_AF = 1 - float(well_max_value)/float(total_well_alleles)
-
-					#print str(AF)
-				except:
-					well_AF = 0.0
-
-				try:
-					if len(alleles) == 1:
-						inova_AF = float(total_inova_alt)/float(total_inova_alleles)
-					else:
-						inova_AF = 1 - float(inova_max_value)/float(total_inova_alleles)
-					#print str(AF)
-				except:
-					inova_AF = 0.0
-
-				if well_AF < 0.01:
-					well_001 += 1
-				elif well_AF < 0.05:
-					well_005 += 1
-				else:
-					well_005_plus += 1
-
-				if inova_AF < 0.01:
-					inova_001 += 1
-				elif inova_AF < 0.05:
-					inova_005 += 1
-				else:
-					inova_005_plus +=1
-
-				continue
-			else:
-				filter_block = filter_block + "\t\n" 
-				good_lines += 1
-				#filter_block = filter_block + "\t"
-			
-
-
-	print "Total missing counter " + str(missing_counter)
-
-	
-	print "Total lines " + str(counter)
-	print "Total good lines " + str(good_lines)
-
-	AF_counter = chrom + "\t" + str(counter) + "\t" + str(missing_counter) + "\t" + str(well_001) + "\t" + str(well_005) + "\t" + str(well_005_plus) + \
-			"\t" + str(inova_001) + "\t" + str(inova_005) + "\t" + str(inova_005_plus) + "\n"
-
-	print AF_counter
-	c.write(AF_counter)
-	c.close()
-	filt.write(filter_block)
-	filter_block = ""
-	filt.flush()
-	
-	f.close()
-	filt.close()
-
+	snps.close()
+	out_filt.close()
+	out_unfilt.close()
 
 if __name__ == '__main__':
 
@@ -268,7 +78,7 @@ if __name__ == '__main__':
 
     import time
     start = time.time()
-    main(sys.argv[1])
+    main()
     #main(sys.argv[1], sys.argv[2], sys.argv[3])
     end = time.time()
     #print 'This took {0} seconds'.format(end - start)
