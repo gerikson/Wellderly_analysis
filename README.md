@@ -37,7 +37,15 @@ python Create_jobs_extract_missing.py
 *Remove variants with coverage <10 or >100
 python  create_jobs_remove_coverage.py
 
+* Extract snp position based on rsID
+python ./snps_of_interest/Extract_position_of_snp.py
 
+*Extract the snps of interest
+python Exract_snps_of_interest.py
+
+
+*Extracting separatelly snps and delins with AF>0.01
+Extract_snpsOnly_AFmoreThen0.01.py
 
 
 

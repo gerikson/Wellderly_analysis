@@ -7,7 +7,7 @@ import subprocess as sp
 #from subprocess import Popen, PIPE
 import shlex
 
-'''
+
 def run(cmd):
   """Runs the given command locally and returns the output, err and exit_code."""
   if "|" in cmd:    
@@ -28,19 +28,20 @@ def run(cmd):
   exit_code = p[0].wait()
 
   return str(output), str(err), exit_code
-'''
 
 
 def main():
 
-	
-	snp_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/desease_snps.txt"
+	QSUB = "qsub -q workq -M gerikson@scripps.edu -l mem=4G -l cput=9600:00:00 -l walltime=500:00:00 "
+	jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/extract_snp/extract_snp."
+
+	snp_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/desease_snps-corected.txt"
 	output_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/filtered_snps.txt"
 	unfiltered_output="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/unfiltered_snps.txt"
 			
 	snps = open(snp_file)
-	out_filt = open(output_filename, 'w')
-	out_unfilt = open(unfiltered_output, 'w')
+	#out_filt = open(output_filename, 'w')
+	#out_unfilt = open(unfiltered_output, 'w')
 	counter = 0
 	for line in snps:
 		counter += 1
@@ -50,6 +51,47 @@ def main():
 		start_position = tp_line[2]
 		filtered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly_clustered_repeats_homopoly_etc_missing_cov/v1_wellderly_inova.VQHIGH.0.95white.nocluster.repeats.etc.missing.cov.chr"+str(chrom)+".vcf.gz"
 		unfiltered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly/wellderly_inova.VQHIGH.0.95white.chr"+str(chrom)+".vcf.gz"
+	
+		command = "zcat " + filtered_filename + " | awk '{if ($2 == "+start_position+") print $0}' >>"+output_filename
+		jobfile = jobs_folder + str(start_position) + "filtered.job"         
+		outjob = open(jobfile, 'w')
+		outjob.write("#!/bin/bash\n")                    
+		outjob.write("#PBS -S /bin/bash\n")
+		outjob.write("#PBS -l nodes=1:ppn=1\n")
+		outjob.write("#PBS -l mem=8gb\n")
+		outjob.write("#PBS -l walltime=500:00:00\n")
+		outjob.write("#PBS -l cput=9600:00:00\n")
+		outjob.write("#PBS -m n\n")
+		outjob.write(command + "\n")
+		outjob.close()  
+		execute = QSUB + ' -e '+ jobs_folder + str(start_position) + 'filtered.job.err -o ' + jobs_folder + str(start_position)  + 'filtered.job.out ' + jobfile
+		sys.stdout.flush()
+		clustnum = os.popen(execute, 'r')
+		jobnum = clustnum.readline().strip()
+		print jobnum
+		clustnum.close()
+
+		'''
+		command2 = "zcat " + unfiltered_filename + " | awk '{if ($2 == "+start_position+") print $0}' >>"+unfiltered_output
+		jobfile2 = jobs_folder + str(start_position) + "unfiltered.job"         
+		outjob = open(jobfile2, 'w')
+		outjob.write("#!/bin/bash\n")                    
+		outjob.write("#PBS -S /bin/bash\n")
+		outjob.write("#PBS -l nodes=1:ppn=1\n")
+		outjob.write("#PBS -l mem=4gb\n")
+		outjob.write("#PBS -l walltime=500:00:00\n")
+		outjob.write("#PBS -l cput=9600:00:00\n")
+		outjob.write("#PBS -m n\n")
+		outjob.write(command2 + "\n")
+		outjob.close()  
+		execute = QSUB + ' -e '+ jobs_folder + str(start_position) + 'unfiltered.job.err -o ' + jobs_folder + str(start_position)  + 'unfiltered.job.out ' + jobfile2
+		sys.stdout.flush()
+		clustnum = os.popen(execute, 'r')
+		jobnum = clustnum.readline().strip()
+		print jobnum
+		clustnum.close()
+
+		
 
 		#check the filtered file first
 		command = "zcat "+filtered_filename
@@ -67,10 +109,10 @@ def main():
 		p2 = sp.Popen(shlex.split(command2) , stdin=p1.stdout, stdout=sp.PIPE)
 		output, error = p2.communicate()
 		out_unfilt.write(output)
-
+		'''
 	snps.close()
-	out_filt.close()
-	out_unfilt.close()
+	#out_filt.close()
+	#out_unfilt.close()
 
 if __name__ == '__main__':
 
