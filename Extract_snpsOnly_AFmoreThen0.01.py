@@ -16,8 +16,8 @@ def main(chrom):
 	counterfile_byAF="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_AFmore0.01/counter_file_by_AF.txt"
 
 	i = gzip.open(infile)
-	snpfile = gzip.open(snp_file, "w")
-	delinsfile = gzip.open(delins_file, "w")
+	#snpfile = gzip.open(snp_file, "w")
+	#delinsfile = gzip.open(delins_file, "w")
 	count_snps = open(counter_snps, "a")
 	count_delins = open(counter_delins, "a")
 	counterf = open(counterfile_byAF, "a")
@@ -34,14 +34,14 @@ def main(chrom):
 	inova_005 = 0
 	inova_005_plus = 0
 
-	snp_buffer = ""
-	delin_buffer = ""
+	#snp_buffer = ""
+	#delin_buffer = ""
 
 	for line in i:
 		counter += 1
 		if line[:1] == "#":
-			snpfile.write(line)
-			delinsfile.write(line)
+			#snpfile.write(line)
+			#delinsfile.write(line)
 			continue
 		else:
 			tp_line = line.split("\t")
@@ -198,15 +198,16 @@ def main(chrom):
 			else:
 				inova_005_plus +=1
 
+			
 			if well_AF > 0.01 or inova_AF > 0.01:
 				if is_this_snp:
-					snp_buffer = snp_buffer+line
+					#snp_buffer = snp_buffer+line
 					counter_snps_AF001 += 1
 				else:
-					delin_buffer = delin_buffer+line
+					#delin_buffer = delin_buffer+line
 					counter_delins_AF001 += 1
-
-
+			
+		'''
 		if counter%100 == 0:
 			snpfile.write(snp_buffer)
 			snp_buffer = ""
@@ -215,23 +216,22 @@ def main(chrom):
 			delinsfile.write(delin_buffer)
 			delin_buffer = ""
 			delinsfile.flush()
-
+		'''
 		if counter%10000 ==0:
 			print "Total lines"
 			print str(counter)
 			sys.stdout.flush()
 
+	'''
 	snpfile.write(snp_buffer)
 	snp_buffer = ""
 	snpfile.flush()
 
 	delinsfile.write(delin_buffer)
-	delin_buffer = ""
-	delin_buffer.flush()
-	print "Total lines"
+	'''
+	print "Final Total lines"
 	print str(counter)
-	print "Good lines "
-	print str(good_lines)
+
 	AF_counter = chrom + "\t" + str(counter) + "\t" + str(well_001) + "\t" + str(well_005) + "\t" + str(well_005_plus) + \
 				"\t" + str(inova_001) + "\t" + str(inova_005) + "\t" + str(inova_005_plus)
 	
@@ -239,12 +239,12 @@ def main(chrom):
 	counterf.write(AF_counter)
 	counterf.close()
 	count_snps.write(chrom+"\t"+str(counter)+"\t"+str(counter_snps_AF001)+"\n")
-	count.close()
+	count_snps.close()
 	count_delins.write(chrom+"\t"+str(counter)+"\t"+str(counter_delins_AF001)+"\n")
 	count_delins.close()
 	i.close()
-	snpfile.close()
-	delinsfile.close()
+	#snpfile.close()
+	#delinsfile.close()
 
 
 

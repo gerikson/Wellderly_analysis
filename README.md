@@ -45,7 +45,19 @@ python Exract_snps_of_interest.py
 
 
 *Extracting separatelly snps and delins with AF>0.01
-Extract_snpsOnly_AFmoreThen0.01.py
+python Extract_snpsOnly_AFmoreThen0.01.py
+
+*Concatenating the vcf file by chrom into a final one:
+vcf-concat vcf_snps_AF0.01.chr1.vcf.gz vcf_snps_AF0.01.chr2.vcf.gz vcf_snps_AF0.01.chr3.vcf.gz vcf_snps_AF0.01.chr4.vcf.gz vcf_snps_AF0.01.chr5.vcf.gz vcf_snps_AF0.01.chr6.vcf.gz vcf_snps_AF0.01.chr7.vcf.gz vcf_snps_AF0.01.chr8.vcf.gz vcf_snps_AF0.01.chr9.vcf.gz vcf_snps_AF0.01.chr10.vcf.gz vcf_snps_AF0.01.chr11.vcf.gz vcf_snps_AF0.01.chr12.vcf.gz vcf_snps_AF0.01.chr13.vcf.gz vcf_snps_AF0.01.chr14.vcf.gz vcf_snps_AF0.01.chr15.vcf.gz vcf_snps_AF0.01.chr16.vcf.gz vcf_snps_AF0.01.chr17.vcf.gz vcf_snps_AF0.01.chr18.vcf.gz vcf_snps_AF0.01.chr19.vcf.gz vcf_snps_AF0.01.chr20.vcf.gz vcf_snps_AF0.01.chr21.vcf.gz vcf_snps_AF0.01.chr22.vcf.gz | gzip -c >final_vcf_allChrom_snps_AF0.01.vcf.gz
+
+
+*Run the first step of the association on all data:
+python create_job_association_final.py
+
+
+
+
+
 
 
 

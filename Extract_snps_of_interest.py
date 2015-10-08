@@ -52,6 +52,7 @@ def main():
 		filtered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly_clustered_repeats_homopoly_etc_missing_cov/v1_wellderly_inova.VQHIGH.0.95white.nocluster.repeats.etc.missing.cov.chr"+str(chrom)+".vcf.gz"
 		unfiltered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly/wellderly_inova.VQHIGH.0.95white.chr"+str(chrom)+".vcf.gz"
 	
+		'''
 		command = "zcat " + filtered_filename + " | awk '{if ($2 == "+start_position+") print $0}' >>"+output_filename
 		jobfile = jobs_folder + str(start_position) + "filtered.job"         
 		outjob = open(jobfile, 'w')
@@ -92,7 +93,7 @@ def main():
 		clustnum.close()
 
 		
-
+		'''
 		#check the filtered file first
 		command = "zcat "+filtered_filename
 		p1 = sp.Popen(shlex.split(command), stdout=sp.PIPE)

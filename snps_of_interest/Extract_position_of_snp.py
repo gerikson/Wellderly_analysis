@@ -5,7 +5,7 @@ Extract position of snp based on start position
 from myvariant.variant import Variant
 
 infile="/Users/gerikson/Desktop/Sublime/Wellderly_scripts/GitHub/snps_of_interest/desease_snps.txt"
-outfile="/Users/gerikson/Desktop/Sublime/Wellderly_scripts/GitHub/snps_of_interest/desease_snps-corected.txt"
+outfile="/Users/gerikson/Desktop/Sublime/Wellderly_scripts/GitHub/snps_of_interest/desease_snps-corected_ref.txt"
 inf = open(infile)
 outf = open(outfile, 'w')
 diff_coordinates = 0
