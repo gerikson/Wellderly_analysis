@@ -1,0 +1,1 @@
+S <- read.table("final_vcf_allChrom_snps_AF0.01-results.assoc.logistic", header=F)

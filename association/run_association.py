@@ -9,7 +9,7 @@ def create_job_file():
     
     vcffile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_AFmore0.01/final_vcf_allChrom_snps_AF0.01.vcf.gz"
     infile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/final_vcf_allChrom_snps_AF0.01"
-    command = "/gpfs/home/nwineing/plink --vcf "+vcffile+" --double-id --vcf-half-call m --make-bed --out "+infile + "\n"
+    #command = "/gpfs/home/nwineing/plink --vcf "+vcffile+" --double-id --vcf-half-call m --make-bed --out "+infile + "\n"
 
 
     jobfile = jobs_folder  + ".job"         
@@ -23,7 +23,7 @@ def create_job_file():
     outjob.write("#PBS -m n\n")
 
     # name markers according to position #
-
+    '''
     sign = '"_"'
     command += "awk '{print $1, $1"+sign+"$4"+sign+"$5"+sign+"$6, $3, $4, $5, $6}' < " +infile +".bim > "+infile+".temp\n"
     command += "rm "+infile+".bim\n"
@@ -44,13 +44,10 @@ def create_job_file():
     # calculate PCs (first 10) #
     command +="/gpfs/home/nwineing/plink --bfile "+infile+"-MAF_LD_pruned --pca 10 --out "+infile+"-PCA\n"
 
-    ### plot PCs in R ###
-    command +="R PCA.R\n"
-
     
     #Do this later on the combined dataset
     ### plot PCs in R ###
-    '''
+    
     library(ggplot2)
     dat <- read.table("test-PCA.eigenvec", F)
     # first 519 are wellderly, remaining are inova #
@@ -63,9 +60,9 @@ def create_job_file():
     p
     dev.off()
     q()
-    '''
+    
 
-    '''
+
     ##### ASSOCIATION TESTING #####
 
     # create phenotype file in R #
@@ -76,8 +73,9 @@ def create_job_file():
     write.table(out, "test.pheno", quote=FALSE, row.names=FALSE, col.names=FALSE, sep="\t")
     q()
 
+    '''
     # perform association testing (logistic) using pcs as covariate #
-    plink --bfile test --logistic --pheno test.pheno --covar test-PCA.eigenvec --allow-no-sex --hide-covar --out test-results
+    command = "plink --bfile "+infile+" --logistic --pheno "+infile+".pheno --covar "+infile+"-PCA.eigenvec --allow-no-sex --hide-covar --out "+infile+"-results\n"
 
 
     ##### POST-ASSOCIATION PRUNING (for QQ plot) #####
@@ -86,11 +84,12 @@ def create_job_file():
     ##### filter by LD for QQ plot, but not for results #####
 
     # reduce asssociation testing output #
-    awk '{ print $2, $9}' < test-results.assoc.logistic > test-results.assoc.logistic.short
+    command += "awk '{ print $2, $9}' < "+infile+"-results.assoc.logistic > "+infile+"-results.assoc.logistic.short\n"
 
     # reduce marker names output #
-    awk '{ print $2}' < test-0.05_MAF.bim > test-0.05_MAF.bim.short         # this is the filtered marker list
+    command += "awk '{ print $2}' < "+ infile+"-0.05_MAF.bim > "+infile+"-0.05_MAF.bim.short\n"         # this is the filtered marker list
 
+    '''
     # prune in R #
     results <- read.table("test-results.assoc.logistic.short", T)
     snp_names <- read.table("test-0.05_MAF.bim.short", F)

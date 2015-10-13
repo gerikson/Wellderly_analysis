@@ -54,6 +54,11 @@ vcf-concat vcf_snps_AF0.01.chr1.vcf.gz vcf_snps_AF0.01.chr2.vcf.gz vcf_snps_AF0.
 *Run the first step of the association on all data:
 python create_job_association_final.py
 
+*Second step:
+python run_association.py
+
+*Association shows biggest p-values in repeat regions, removing all of them:
+python ./association/create_jobs_remove_ALLrepeats_association.py
 
 
 
