@@ -35,6 +35,9 @@ p
 dev.off()
 q()
 
+### do IBD
+
+plink --file mydata --genome --min 0.125  (http://pngu.mgh.harvard.edu/~purcell/plink/ibdibs.shtml)
 
 ##### ASSOCIATION TESTING #####
 

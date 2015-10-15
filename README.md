@@ -57,10 +57,15 @@ python create_job_association_final.py
 *Second step:
 python run_association.py
 
-*Association shows biggest p-values in repeat regions, removing all of them:
+*Association shows biggest p-values in repeat regions, removing all of them --> skiped this for final analysis:
 python ./association/create_jobs_remove_ALLrepeats_association.py
 
+*Extracted the related individuals <-- This doesn't work
+/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_AFmore0.01> vcftools --gzvcf final_vcf_allChrom_snps_AF0.01.vcf.gz --remove eliminate_individuals.txt --out final_vcf_allChroms_snps_AD0.01_noRelated.vcf.gz
 
+*Extract related better version
+
+python Excluded_related.py
 
 
 
