@@ -1,10 +1,11 @@
 import os, sys, datetime
-
+"""
+This needs module load python/2.6.5 in .bash_profile
+"""
 def create_job_file(sample):
 
-    
-    #command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/Extract_White_filter_vcf.py chr" + str(sample)
-    command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/remove_coverage.py chr" + str(sample)
+    #command = "cg compar2vcf /gpfs/group/stsi/data/projects/wellderly/GenomeComb/inova_results/mcompar."+str(sample)+ ".txt.gz /gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_results/genome_comb_results_chr"+str(sample)+".vcf"
+    command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/concatenate.py " + str(sample)
     jobfile = jobs_folder + str(sample) + ".job"         
     outjob = open(jobfile, 'w')
     outjob.write("#!/bin/csh\n")                    
@@ -30,11 +31,14 @@ print datetime.datetime.now().time()
 
 counter = 0
 QSUB = "qsub -q stsi -M gerikson@scripps.edu -l mem=8G -l cput=9600:00:00 -l walltime=500:00:00 "
-jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/filter/rem_inova_cov."
+jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/concat."
+
+#create_job_file("22")
 
 
-for sample in range(1,23):    
+for sample in range(1,22):    
     create_job_file(sample)
+
 
 create_job_file("X")
 #create_job_file("Y")

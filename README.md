@@ -64,8 +64,16 @@ python ./association/create_jobs_remove_ALLrepeats_association.py
 /gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_AFmore0.01> vcftools --gzvcf final_vcf_allChrom_snps_AF0.01.vcf.gz --remove eliminate_individuals.txt --out final_vcf_allChroms_snps_AD0.01_noRelated.vcf.gz
 
 *Extract related better version
-
 python Excluded_related.py
+
+*Concatenate files
+python concatenate.py
+
+*Extracted inova coverage
+
+*Concatenating v1 (still need to concatenate chr1-chr4)
+vcf-concat final_vcf_nokmer_snps_AF0.01.noRelated.chr5.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr6.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr7.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr8.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr9.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr10.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr11.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr12.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr13.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr14.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr16.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr17.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr18.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr19.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr20.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr21.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr22.vcf.gz | gzip -c >final_vcf_nokmer_snps_AF0.01.noRelated.temp.vcf.gz
+
 
 
 

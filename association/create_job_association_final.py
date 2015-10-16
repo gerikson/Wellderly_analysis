@@ -7,7 +7,7 @@ def create_job_file():
 
     #infile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/chr."+str(sample)
     
-    vcffile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_AFmore0.01/final_vcf_allChrom_snps_AF0.01.vcf.gz"
+    vcffile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/final_vcf_nokmer_snps_AF0.01.noRelated.vcf.gz"
     infile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/final_vcf_allChrom_snps_AF0.01"
     command = "/gpfs/home/nwineing/plink --vcf "+vcffile+" --double-id --vcf-half-call m --make-bed --out "+infile + "\n"
 
@@ -45,7 +45,7 @@ def create_job_file():
     command +="/gpfs/home/nwineing/plink --bfile "+infile+"-MAF_LD_pruned --pca 10 --out "+infile+"-PCA\n"
 
     ### plot PCs in R ###
-    command +="R PCA.R\n"
+    #command +="R PCA.R\n"
 
     
     #Do this later on the combined dataset

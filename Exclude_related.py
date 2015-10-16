@@ -10,8 +10,6 @@ def main(chrom):
 	outfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/vcf_nokmer_snps_AF0.01.noRelated." + chrom + ".vcf.gz"
 	relatedfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/eliminate_individuals.txt"
 
-
-
 	w = open(relatedfile)
 	related_id = []
 
@@ -84,22 +82,15 @@ def main(chrom):
 			if counter%10000 ==0:
 				print "Total lines"
 				print str(counter)
-
 				sys.stdout.flush()
 
 	o.write(buffe)
 	i.close()
 	o.close()
-
 	#clus.close()
 	print "Total lines"
 	print str(counter)
-
 	print "End"
-
-
-
-
 
 
 if __name__ == '__main__':
