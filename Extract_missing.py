@@ -53,6 +53,7 @@ def main(chrom):
 			
 			well_missing = 0
 			inova_missing = 0
+
 			for index, gen in enumerate(tp_line[9:]):
 				index = index + 9
 				#geno = gen.split(":")

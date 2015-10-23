@@ -9,6 +9,8 @@ def create_job_file():
     
     vcffile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_AFmore0.01/final_vcf_allChrom_snps_AF0.01.vcf.gz"
     infile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/final_vcf_allChrom_snps_AF0.01"
+    
+    
     #command = "/gpfs/home/nwineing/plink --vcf "+vcffile+" --double-id --vcf-half-call m --make-bed --out "+infile + "\n"
 
 

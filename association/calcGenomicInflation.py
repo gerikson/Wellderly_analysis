@@ -217,7 +217,7 @@ def median(mylist):
 def main():
     ch = "1"
 
-    RepeatMasker_filename="/gpfs/home/gerikson/wellderly/filter_data/RepeatMasker/byChrom_ALL/RepeatMasker.chr"+ch+".txt"
+    #RepeatMasker_filename="/gpfs/home/gerikson/wellderly/filter_data/RepeatMasker/byChrom_ALL/RepeatMasker.chr"+ch+".txt"
 
     input_filename = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/final_vcf_allChrom_snps_AF0.01-results.assoc.logistic"
     LD_pruned = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/final_vcf_allChrom_snps_AF0.01-MAF_LD_pruned.bim"

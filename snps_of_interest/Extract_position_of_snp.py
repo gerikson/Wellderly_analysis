@@ -4,8 +4,8 @@ Extract position of snp based on start position
 
 from myvariant.variant import Variant
 
-infile="/Users/gerikson/Desktop/Sublime/Wellderly_scripts/GitHub/snps_of_interest/desease_snps.txt"
-outfile="/Users/gerikson/Desktop/Sublime/Wellderly_scripts/GitHub/snps_of_interest/desease_snps-corected_ref.txt"
+infile="/Users/gerikson/Desktop/Sublime/Wellderly_scripts/GitHub/snps_of_interest/disease_snps_alzeimers.txt"
+outfile="/Users/gerikson/Desktop/Sublime/Wellderly_scripts/GitHub/snps_of_interest/disease_snps_alzeimers_corrected.txt"
 inf = open(infile)
 outf = open(outfile, 'w')
 diff_coordinates = 0

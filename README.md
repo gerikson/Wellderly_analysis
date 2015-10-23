@@ -75,9 +75,16 @@ python concatenate.py
 vcf-concat final_vcf_nokmer_snps_AF0.01.noRelated.chr5.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr6.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr7.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr8.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr9.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr10.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr11.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr12.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr13.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr14.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr16.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr17.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr18.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr19.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr20.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr21.vcf.gz final_vcf_nokmer_snps_AF0.01.noRelated.chr22.vcf.gz | gzip -c >final_vcf_nokmer_snps_AF0.01.noRelated.temp.vcf.gz
 
 
+*Extract snps of interest from vcf file
+python Extract_snps_of_interest.vcf.py
 
+*Extract coveage by individual snps of interest:
+python Extract_coverage_SnpSOfInterest_wellderly.py
 
+*Calculate AF and median coverage (from median coverage file) SNPs of interest, missing geno and VQHIGH for both wellderly and inova:
+python Calculate_AF_welldVsInova.py
 
+* Match p-values from association based on location
 
 
 

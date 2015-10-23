@@ -1,5 +1,5 @@
 """
-Extract snps of interest from vcf file
+Extract coverage for snp of interest from the coverage files wellderly or inova
 
 """
 import os, sys, gzip, datetime
@@ -11,11 +11,11 @@ import shlex
 def main():
 
 	QSUB = "qsub -q workq -M gerikson@scripps.edu -l mem=4G -l cput=9600:00:00 -l walltime=500:00:00 "
-	jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/extract_snp/inova_cov"
+	jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/extract_snp/cov_inova."
 
 	#snp_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/desease_snps-corected.txt"
-	snp_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/filtered_snps.txt"
-	coverage_output="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/coverage_snps_inova.txt"
+	snp_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/smallest_pvalues.correct.txt"
+	coverage_output="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/Cov_snpsOfInterest_welld.txt"
 			
 	snps = open(snp_file)
 	#out_filt = open(output_filename, 'w')
@@ -25,13 +25,14 @@ def main():
 		counter += 1
 		print str(counter)
 		tp_line = line.strip().split("\t")
-		chrom = tp_line[0]
-		start_position = tp_line[1]
-		len_alt = str(len(tp_line[3]))
+		ch = tp_line[0].split("_")
+		chrom = ch[0]
+		start_position = str(int(ch[1]) - 1)
 
-		var = start_position +"_"+len_alt
+		var = start_position +"_1"
 		file_pattern = "coverages_for_chrm_"+str(chrom)+"_*"
 		#command = "zcat " + filtered_filename + " | awk '{if ($2 == "+start_position+") print $0}' >>"+output_filename
+
 		command = "find . -name " + '"'+file_pattern+'" | xargs grep -E '+"'"+var+"' >>" +coverage_output
 		print command
 		jobfile = jobs_folder + str(var) + ".job"         
@@ -43,8 +44,8 @@ def main():
 		outjob.write("#PBS -l walltime=500:00:00\n")
 		outjob.write("#PBS -l cput=9600:00:00\n")
 		outjob.write("#PBS -m n\n")
-		#outjob.write("cd /gpfs/group/torkamani/bhuvan/wellderly/coverage/CoverageInfo/Whites\n")
-		outjob.write("cd /gpfs/group/stsi/data/projects/wellderly/GenomeComb/inova_coverage_byIndiv/Whites\n")
+		outjob.write("cd /gpfs/group/torkamani/bhuvan/wellderly/coverage/CoverageInfo/Whites\n")
+		#outjob.write("cd /gpfs/group/stsi/data/projects/wellderly/GenomeComb/inova_coverage_byIndiv/Whites\n")
 		outjob.write(command + "\n")
 		outjob.close()  
 		execute = QSUB + ' -e '+ jobs_folder + str(var) + '.job.err -o ' + jobs_folder + str(var)  + '.job.out ' + jobfile

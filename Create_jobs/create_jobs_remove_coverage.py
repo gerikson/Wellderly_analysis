@@ -2,8 +2,6 @@ import os, sys, datetime
 
 def create_job_file(sample):
 
-    
-    #command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/Extract_White_filter_vcf.py chr" + str(sample)
     command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/remove_coverage.py chr" + str(sample)
     jobfile = jobs_folder + str(sample) + ".job"         
     outjob = open(jobfile, 'w')
@@ -37,5 +35,5 @@ for sample in range(1,23):
     create_job_file(sample)
 
 create_job_file("X")
-#create_job_file("Y")
+create_job_file("Y")
 create_job_file("M")

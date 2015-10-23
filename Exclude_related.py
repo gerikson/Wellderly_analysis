@@ -6,8 +6,12 @@ Extract related individuals
 import os, sys, gzip, datetime 
 
 def main(chrom):
-	infile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/vcf_nokmer_snps_AF0.01." + chrom + ".vcf.gz"
-	outfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/vcf_nokmer_snps_AF0.01.noRelated." + chrom + ".vcf.gz"
+	#infile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/vcf_nokmer_snps_AF0.01." + chrom + ".vcf.gz"
+	#outfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/vcf_nokmer_snps_AF0.01.noRelated." + chrom + ".vcf.gz"
+	
+	#For the riskogram
+	infile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/filtered_snps.withHead.txt"
+	outfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/filtered_snps.noRelated.withHead.txt"
 	relatedfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/eliminate_individuals.txt"
 
 	w = open(relatedfile)
@@ -21,8 +25,11 @@ def main(chrom):
 	whites_id = ln.split("\t")
 
 
-	i = gzip.open(infile)
-	o = gzip.open(outfile, 'w')
+	#i = gzip.open(infile)
+	#o = gzip.open(outfile, 'w')
+
+	i = open(infile)
+	o = open(outfile, 'w')
 
 
 

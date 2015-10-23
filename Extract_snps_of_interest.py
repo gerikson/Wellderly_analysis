@@ -32,12 +32,12 @@ def run(cmd):
 
 def main():
 
-	QSUB = "qsub -q workq -M gerikson@scripps.edu -l mem=4G -l cput=9600:00:00 -l walltime=500:00:00 "
-	jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/extract_snp/extract_snp."
+	QSUB = "qsub -q stsi -M gerikson@scripps.edu -l mem=8G -l cput=9600:00:00 -l walltime=500:00:00 "
+	jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/extract_snp/alzeimers."
 
-	snp_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/desease_snps-corected.txt"
-	output_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/filtered_snps.txt"
-	unfiltered_output="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/unfiltered_snps.txt"
+	snp_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/disease_snps_alzeimers_corrected.txt"
+	output_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/filtered_snps_alzeimers.txt"
+	#unfiltered_output="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/unfiltered_alzeimers.txt"
 			
 	snps = open(snp_file)
 	#out_filt = open(output_filename, 'w')
@@ -49,10 +49,10 @@ def main():
 		tp_line = line.strip().split("\t")
 		chrom = tp_line[1]
 		start_position = tp_line[2]
-		filtered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly_clustered_repeats_homopoly_etc_missing_cov/v1_wellderly_inova.VQHIGH.0.95white.nocluster.repeats.etc.missing.cov.chr"+str(chrom)+".vcf.gz"
-		unfiltered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly/wellderly_inova.VQHIGH.0.95white.chr"+str(chrom)+".vcf.gz"
+		filtered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/final_vcf_nokmer_snps_AF0.01.noRelated.chr"+str(chrom)+".vcf.gz"
+		#unfiltered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly/wellderly_inova.VQHIGH.0.95white.chr"+str(chrom)+".vcf.gz"
 	
-		'''
+		
 		command = "zcat " + filtered_filename + " | awk '{if ($2 == "+start_position+") print $0}' >>"+output_filename
 		jobfile = jobs_folder + str(start_position) + "filtered.job"         
 		outjob = open(jobfile, 'w')
@@ -91,7 +91,7 @@ def main():
 		jobnum = clustnum.readline().strip()
 		print jobnum
 		clustnum.close()
-
+		'''
 		
 		'''
 		#check the filtered file first
