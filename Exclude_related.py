@@ -15,8 +15,6 @@ def main(chrom):
 	relatedfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/eliminate_individuals.txt"
 
 	w = open(relatedfile)
-	related_id = []
-
 	header = []
 	#index the whites
 	ln = w.readline()

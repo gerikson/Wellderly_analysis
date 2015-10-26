@@ -3,7 +3,7 @@
 
 #Set VQLOW as missing after all filters
 #Generate plink files
-/gpfs/home/nwineing/plink --vcf /gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/vcf_noVQHIGH.vcf.gz --double-id --vcf-half-call m --make-bed --out test
+/gpfs/home/nwineing/plink --vcf /gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_final_allFilters_noVQLOW_snpsOnly_AF0.01/final_vcf_allChrom_snps_AF0.01.vcf.gz --double-id --vcf-half-call m --make-bed --out test
 
 awk '{print $1, $1"-"$4"-"$5"-"$6, $3, $4, $5, $6}' < test.bim > test.temp
 

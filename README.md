@@ -85,8 +85,10 @@ python Extract_coverage_SnpSOfInterest_wellderly.py
 python Calculate_AF_welldVsInova.py
 
 * Match p-values from association based on location
+final_association.sh
 
-
+*Extract rare variants
+python Create_jobs_extract_rareVariants.py
 
 
 * Apply the filters: missing/uncertain genotype > 10 perc in either wellderly or inova, covereage <10 or >100, whites only (testing 0.85 white and 0.95)
