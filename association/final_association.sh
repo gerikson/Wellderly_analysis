@@ -1,5 +1,5 @@
 #Final association steps
-#From /gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/final_assoc
+#From /gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/final_assoc/
 
 #Set VQLOW as missing after all filters
 #Generate plink files
@@ -42,15 +42,14 @@ mv test.temp test.bim
 
 ### plot PCs in R ###
 library(ggplot2)
-dat <- read.table("final_vcf_allChrom_snps_AF0.01-PCA.eigenvec", F)
+dat <- read.table("test-PCA.eigenvec", F)
 
 #First 511 are wellderly in red up top, inova in blue behind
-COLOR <- c(rep("bue", times=dim(dat)[1]-511), rep("red", times=511))
+COLOR <- c(rep("blue", times=dim(dat)[1]-511), rep("red", times=511))
 p <- ggplot() +
     geom_point(aes(dat$V3, dat$V4), col=COLOR) +
     xlab("pc1") +
     ylab("pc2")
-tiff("pca.tiff", width=2000, height=2000, res=300, compression="lzw")
 p
 dev.off()
 q()
@@ -71,15 +70,6 @@ awk '{ print $2, $9}' < test-results.assoc.logistic > test-results.assoc.logisti
 # reduce marker names output #
 awk '{ print $2}' < test-0.05_MAF.bim > test-0.05_MAF.bim.short  
 
-#Make QQ plot
-#in R
-
-results <- read.table("final_association.txt", T)
-#filter by LD
-snps_ld <- read.table("test-MAF_LD_pruned",T)
-#keep only the snps in ld
-pruned_results <- results[results$SNP %in% snps_ld$V2,]
-
 
 #Extract AF by population
 #in R
@@ -96,16 +86,9 @@ write.table(inova, "ids-inova.ids", quote=FALSE, row.names=FALSE, col.names=FALS
 #Remove hwe <1e-4 in either cohort or both
 python ~/scripts/Wellderly_scripts/GitHub/association/remove_hwe.py
 
-#Do the manhattan plots
+#Manhattan plot
 install.packages("qqman")
 library(qqman)
-
-#Manhattan plot
-cat test-results.assoc.logistic | awk '{print $2,"\t",$1,"\t",$3,"\t",$9}' >gwasResults.txt
-
-#Get rid of the hwe <1e-4 and either AF in welderly or illumina <0.05
-python ~/scripts/Wellderly_scripts/GitHub/association/remove_hwe.py
-
 
 #in R
 #Load in final association with everything filtered out
@@ -118,6 +101,30 @@ max_results <- final_results[final_results$P<0.00001,]
 write.table(max_results,"smallest_pvalues.txt", quote=FALSE, row.names=FALSE, col.names=FALSE, sep="\t")
 
 tiff("manhattan.tiff", width=2000, height=2000, res=300, compression="lzw")
-manhattan(final_results)
+manhattan(final_results, col = c("red1", "green2","blue2","cyan","blueviolet","yellow","snow3","gray0"))
 dev.off()
+
+#Make QQ plot
+#in R
+
+results <- read.table("final_association.txt", T)
+#filter by LD
+snps_ld <- read.table("test-MAF_LD_pruned.bim")
+#keep only the snps in ld
+pruned_results <- results[results$SNP %in% snps_ld$V2,]
+final_results <- pruned_results[!is.na(pruned_results$P),]
+#> dim(final_results)
+#[1] 518609      9
+obs_P <- -log10(final_results$P[order(final_results$P, decreasing=FALSE)])
+exp_P <- -log10(c(1:length(obs_P))/length(obs_P))
+library(ggplot2)
+p <- ggplot() +
+    geom_point(aes(exp_P, obs_P)) +
+    geom_line(aes(c(0,max(exp_P)), c(0,max(exp_P))), color="red") +
+    ylim(c(0,max(exp_P)))
+
+tiff("qq_plot.tiff", width=2000, height=2000, res=300, compression="lzw")
+p
+dev.off()
+
 
