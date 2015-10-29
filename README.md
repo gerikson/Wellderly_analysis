@@ -90,6 +90,12 @@ final_association.sh
 *Extract rare variants
 python Create_jobs_extract_rareVariants.py
 
+*Extract AF, p-value (from association) snps of interest 
+python Extract_AF_p-values.py
+
+FOR pathway analysis, extract genes/positions (in ~/wellderly/resources)
+mysql -h genome-mysql.cse.ucsc.edu -u genome -D hg19 -N -A -e 'select kgXref.kgID, kgXref.geneSymbol,knownGene.name,knownGene.chrom,knownGene.txStart,knownGene.txEnd from kgXref, knownGene where knownGene.name=kgXref.kgID' >genes_positions.txt
+
 
 * Apply the filters: missing/uncertain genotype > 10 perc in either wellderly or inova, covereage <10 or >100, whites only (testing 0.85 white and 0.95)
 

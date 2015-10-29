@@ -100,8 +100,9 @@ final_results <- snp_names[!is.na(snp_names$P),]
 max_results <- final_results[final_results$P<0.00001,]
 write.table(max_results,"smallest_pvalues.txt", quote=FALSE, row.names=FALSE, col.names=FALSE, sep="\t")
 
-tiff("manhattan.tiff", width=2000, height=2000, res=300, compression="lzw")
-manhattan(final_results, col = c("red1", "green2","blue2","cyan","blueviolet","yellow","snow3","gray0"))
+tiff("manhattan.tiff", width=4000, height=2000, res=300, compression="lzw")
+#manhattan(final_results, col = c("red1", "green2","blue2","cyan","blueviolet","yellow","snow3","gray0"))
+manhattan(final_results, col = c("red1","blue2","darkorange1","blueviolet","green2","gray0"))
 dev.off()
 
 #Make QQ plot
