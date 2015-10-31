@@ -33,7 +33,7 @@ def run(cmd):
 def main():
 
 	QSUB = "qsub -q stsi -M gerikson@scripps.edu -l mem=8G -l cput=9600:00:00 -l walltime=500:00:00 "
-	jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/extract_snp/alzeimers."
+	jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/extract_snp/ALL_snps"
 
 	snp_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/final_ALL_snps-corrected.txt"
 	#snp_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_snps_of_interest/disease_snps_alzeimers_corrected.txt"
@@ -51,10 +51,8 @@ def main():
 		tp_line = line.strip().split("\t")
 		chrom = tp_line[1]
 		start_position = tp_line[2]
-		filtered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/final_assoc/final_wellderly_inova_AF0.05.fixed.withHead.vcf.gz"
-		#filtered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/final_vcf_nokmer_snps_AF0.01.noRelated.chr"+str(chrom)+".vcf.gz"
-		#unfiltered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly/wellderly_inova.VQHIGH.0.95white.chr"+str(chrom)+".vcf.gz"
-		
+		#filtered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/final_assoc/final_wellderly_inova_AF0.05.fixed.withHead.vcf.gz"
+		filtered_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_final_allFilters_noVQLOW_snpsOnly_AF0.01/final_vcf_noVQLOW_snps_AF0.01.noRelated.chr"+str(chrom)+".vcf.gz"
 		
 		command = "zcat " + filtered_filename + " | awk '{if ($2 == "+start_position+") print $0}' >>"+output_filename
 		jobfile = jobs_folder + str(start_position) + "filtered.job"         
@@ -75,48 +73,7 @@ def main():
 		print jobnum
 		clustnum.close()
 
-		'''
-		command2 = "zcat " + unfiltered_filename + " | awk '{if ($2 == "+start_position+") print $0}' >>"+unfiltered_output
-		jobfile2 = jobs_folder + str(start_position) + "unfiltered.job"         
-		outjob = open(jobfile2, 'w')
-		outjob.write("#!/bin/bash\n")                    
-		outjob.write("#PBS -S /bin/bash\n")
-		outjob.write("#PBS -l nodes=1:ppn=1\n")
-		outjob.write("#PBS -l mem=4gb\n")
-		outjob.write("#PBS -l walltime=500:00:00\n")
-		outjob.write("#PBS -l cput=9600:00:00\n")
-		outjob.write("#PBS -m n\n")
-		outjob.write(command2 + "\n")
-		outjob.close()  
-		execute = QSUB + ' -e '+ jobs_folder + str(start_position) + 'unfiltered.job.err -o ' + jobs_folder + str(start_position)  + 'unfiltered.job.out ' + jobfile2
-		sys.stdout.flush()
-		clustnum = os.popen(execute, 'r')
-		jobnum = clustnum.readline().strip()
-		print jobnum
-		clustnum.close()
-		'''
-		
-		'''
-		#check the filtered file first
-		command = "zcat "+filtered_filename
-		p1 = sp.Popen(shlex.split(command), stdout=sp.PIPE)
-		command2 = " awk '{if ($2 == "+start_position+") print $0}'"
-		p2 = sp.Popen(shlex.split(command2) , stdin=p1.stdout, stdout=sp.PIPE)
-		output, error = p2.communicate()
-		out_filt.write(output)
-
-		output = ""
-		#check the unfiltered file
-		command = "zcat "+unfiltered_filename
-		p1 = sp.Popen(shlex.split(command), stdout=sp.PIPE)
-		command2 = " awk '{if ($2 == "+start_position+") print $0}'"
-		p2 = sp.Popen(shlex.split(command2) , stdin=p1.stdout, stdout=sp.PIPE)
-		output, error = p2.communicate()
-		out_unfilt.write(output)
-		'''
 	snps.close()
-	#out_filt.close()
-	#out_unfilt.close()
 
 if __name__ == '__main__':
 

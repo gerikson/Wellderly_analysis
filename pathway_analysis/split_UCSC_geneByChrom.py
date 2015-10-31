@@ -9,6 +9,12 @@ Results:
 Counter 82960
 Good chrom counter 78827
 Total genes 29256
+
+# after emiting the genes with UCSC transcripts that don't even overlap
+Counter 82960
+Good chrom counter 78827
+Total genes 28316
+
 '''
 
 import os, sys, gzip, datetime
@@ -18,10 +24,19 @@ good_chroms =["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","ch
                 "chr21","chr22","chrX","chrY","chrM"]
 chrom="chr1"
 infile=open("/gpfs/home/gerikson/wellderly/resources/genes_positions.txt")
-
 outfilename="/gpfs/home/gerikson/wellderly/resources/byChrom/Genes_"+chrom+".txt"
 
-outfile=open(outfilename,"a")
+#Insert the problem genes in a dictionary
+#These genes should not be kept since the overlap multiple regions
+p_gene=open("/gpfs/home/gerikson/wellderly/resources/problem_genes_v1.txt")
+problem_gene={}
+for line in p_gene:
+    line = line.strip()
+    problem_gene[line] = "Y"
+
+
+outfile=open(outfilename,"w")
+
 counter =0
 good_chrom_counter = 0
 gene_dict={}
@@ -57,31 +72,66 @@ for line in infile:
 
     #Extract gene name
     gene = tp_line[1]
-
+    gene = gene.replace(" ","_")
+    #If this one of the genes that need to be eliminated
+    #Go to the next iteration
     try:
-        pos = gene_dict[gene]
-        #verify if the new coordinates are different then the existing ones
-        #If begin is smaller then previous or end is bigger then previous set the
-        #new coordinates and update the dictionary
-        tp_pos = pos.split("_")
-        beg = tp_pos[0]
-        end = tp_pos[1]
-        if int(tp_line[4]) < int(beg):
-            #print "new begin! " +tp_line[4]
-            #print "old begin " + beg
-            beg = tp_line[4]
+        prob_gen = problem_gene[gene]
+        continue
 
-        if int(tp_line[5]) > int(end):
-            #print "new end! " +tp_line[5]
-            #print "old end " + end
-            end = tp_line[5]
-
-        pos = beg+"_"+end+"_"+tp_pos[2]+"_"+tp_pos[3]+"///"+tp_line[0]
-        gene_dict[gene]=pos
-        #print "Gene succesfully updated"
     except:
-        pos=tp_line[4]+"_"+tp_line[5] + "_"+tp_line[3]+"_"+tp_line[0]
-        gene_dict[gene]=pos
+
+        try:
+            pos = gene_dict[gene]
+            #verify if the new coordinates are different then the existing ones
+            #If begin is smaller then previous or end is bigger then previous set the
+            #new coordinates and update the dictionary
+            tp_pos = pos.split("_")
+            beg = tp_pos[0]
+            end = tp_pos[1]
+
+            '''
+            #Verify if the new begin is bigger then the end +100,000
+            #That means the 2 transcripts are not overlapping should treat it differently:
+            #This looks like 2 separate genes, need to me kept twice
+
+            if int(tp_line[4]) >(int(end)+100000):
+                
+                print gene
+                print pos
+                problem_gene.write(gene+"\n")
+                
+                pos=tp_line[4]+"_"+tp_line[5] + "_"+tp_line[3]+"_"+tp_line[0]
+                gene_dict[gene]=pos
+            '''
+
+            #if this overlap ends  before the begin of existing overlap then break
+            if int(tp_line[5]) < (int(beg)-100000):
+                print "too small"
+                continue
+            elif int(tp_line[4]) > (int(end)+100000):
+                print "too big"
+                continue
+
+
+            #else:   
+            if int(tp_line[4]) < int(beg):
+                #print "new begin! " +tp_line[4]
+                #print "old begin " + beg
+                beg = tp_line[4]
+
+            if int(tp_line[5]) > int(end):
+                #print "new end! " +tp_line[5]
+                #print "old end " + end
+                end = tp_line[5]
+
+
+            pos = beg+"_"+end+"_"+tp_pos[2]+"_"+tp_pos[3]+"///"+tp_line[0]
+            gene_dict[gene]=pos
+            #print "Gene succesfully updated"
+        except:
+            pos=tp_line[4]+"_"+tp_line[5] + "_"+tp_line[3]+"_"+tp_line[0]
+            gene_dict[gene]=pos
 
 #Store last chromosome
 print chrom + "\t" +str(len(gene_dict))
@@ -99,6 +149,7 @@ print "Good chrom counter "+str(good_chrom_counter)
 print "Total genes " + str(total_genes)
 infile.close()
 outfile.close() 
+p_gene.close()
 
 for sample in range(1,23):  
     infile= "/gpfs/home/gerikson/wellderly/resources/byChrom/Genes_chr"+str(sample)+".txt" 

@@ -93,8 +93,30 @@ python Create_jobs_extract_rareVariants.py
 *Extract AF, p-value (from association) snps of interest 
 python Extract_AF_p-values.py
 
+ASSOCIATION
+./association/final_association.sh
+
+
+PATHWAY ANALYSIS
 FOR pathway analysis, extract genes/positions (in ~/wellderly/resources)
 mysql -h genome-mysql.cse.ucsc.edu -u genome -D hg19 -N -A -e 'select kgXref.kgID, kgXref.geneSymbol,knownGene.name,knownGene.chrom,knownGene.txStart,knownGene.txEnd from kgXref, knownGene where knownGene.name=kgXref.kgID' >genes_positions.txt
+
+* Extract genes with 100kb interval (from pathway analysis folder)
+python split_UCSC_geneByChrom.py
+
+*Add gene to bim file (not needed in the end)
+python add_gene_to_bim.py
+
+*Generate 10k *.pheno files and run the simulation
+python generate_pheno_files.py
+
+
+
+
+
+
+
+
 
 
 * Apply the filters: missing/uncertain genotype > 10 perc in either wellderly or inova, covereage <10 or >100, whites only (testing 0.85 white and 0.95)
