@@ -32,3 +32,31 @@ python add_gene_to_bim.py
 
 #Run the association with corrected file (make sure no problems)
 plink --bfile plink --logistic hide-covar --pheno plink.pheno --covar plink-PCA.eigenvec --allow-no-sex --out results
+
+#Start 10k jobs to generate random *.pheno and run association with simulated Pheno files
+python generate_pheno_files.py
+
+#Restart the jobs that failed
+#From directory check file sizes
+find -size 348M >jobs.succesfully.complete
+wc -l jobs.succesfully.completed
+10000 jobs.succesfully.completed
+python restart_failed_jobs.py
+
+#Extract gene names and index of the variants
+# in plink files where the gene is located
+python Extract_gene_from_plink.py >no_assigned_gene.txt
+sort -k3n,3 gene_names_coordinates_plink.txt >gene_names_coordinates_plink.sorted.txt
+
+3799647 plink.withGene.bim
+881747 no_assigned_gene.txt
+
+#Extract smallest p-value by gene:
+python Extract_smallest_p_value_byGene.py
+
+#Real data smallest p-values by gene
+/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/backup_plink_files/REAL_DATA_smallest_p_value_per_gene.txt
+
+
+#Start all simulation jobs, extract minimum p-value
+python Create_jobs_extract_min_perGene_simulation.py

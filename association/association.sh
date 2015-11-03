@@ -1,4 +1,4 @@
-# create plink format file #
+i# create plink format file #
 /gpfs/home/nwineing/plink --vcf /gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/final_vcf_nokmer_snps_AF0.01.noRelated.vcf.gz --double-id --vcf-half-call m --make-bed --out test
 
 # name markers according to position #
