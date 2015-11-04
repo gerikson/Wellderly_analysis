@@ -60,3 +60,12 @@ python Extract_smallest_p_value_byGene.py
 
 #Start all simulation jobs, extract minimum p-value
 python Create_jobs_extract_min_perGene_simulation.py
+
+#Combine simulations
+python combine_simulations.py
+
+#Remove duplicate genes
+python Remove_duplicate_genes.py
+
+#Run GSEA 
+Run GSEA on a Pre-Ranked gene list with gene set databases: Hallmarks, Reactome, GO: biological processes

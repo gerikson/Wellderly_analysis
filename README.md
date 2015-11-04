@@ -111,7 +111,10 @@ python add_gene_to_bim.py
 python generate_pheno_files.py
 
 
+*For pathway analysis read ./pathway_analysis/pathway_analysis.sh
 
+*Extract all filters:
+python Create_jobs_apply_all_filters.py
 
 
 
