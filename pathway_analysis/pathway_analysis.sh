@@ -69,3 +69,15 @@ python Remove_duplicate_genes.py
 
 #Run GSEA 
 Run GSEA on a Pre-Ranked gene list with gene set databases: Hallmarks, Reactome, GO: biological processes
+
+#Reasign genes only 1 gene per snp
+python ./Reasign_genes/genes_reasignment.py
+
+#Sort files
+sort -k 1n,1 -k 3n,3 gene_names_coordinates_plink_final.txt > gene_names_coordinates_plink_final.sorted.txt
+
+#Still some issues, for the overlapping genes the snps gets the gene that starts first
+#21047 gene_names_coordinates_plink_final.sorted.txt
+
+#Extract minimum p-value per simulation
+python ./Reassign_genes/Create_jobs_extract_min_perGene.py
