@@ -116,6 +116,23 @@ python generate_pheno_files.py
 *Extract all filters:
 python Create_jobs_apply_all_filters.py
 
+FOR Rare variants
+*Extracting ALL clustered variants:
+python ./Rare_variant_analysis/Create_jobs_remove_ALL_clustered.py
+
+
+
+
+*Extracting snp position for cognitive snps
+python ./pathway_analysis/CognitiveSnps/Extract_snp_position.py
+
+#Extract cognitive snps p-values from all 10k simulations
+python ./pathway_analysis/CognitiveSnps/Create_jobs_extract_sim_pvalues.py
+
+
+
+
+
 
 
 

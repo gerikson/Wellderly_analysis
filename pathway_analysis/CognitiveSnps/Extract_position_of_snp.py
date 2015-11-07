@@ -15,8 +15,10 @@ counter = 0
 #desease = ""
 for line in inf:
 	#print line
-	tp_line = line.split("\t")
-	rsID = tp_line[0]
+	#p_line = line.split("\t")
+	#rsID = tp_line[0]
+
+	rsID = line.strip()
 	#print rsID
 	try:
 		counter += 1
@@ -24,21 +26,16 @@ for line in inf:
 		for r in results:
 			#print r._id 
 			begin = r.dbsnp['hg19']['start']
-			if str(begin) != tp_line[2]:
-				tp_line[2] = str(begin)
-				corrected_line = "\t".join(tp_line)
-				outf.write(corrected_line)
-				diff_coordinates +=1
-			else:
-				corrected_line = "\t".join(tp_line)
-				outf.write(corrected_line)
-	
+			temp_id = r._id
+			temp_id1 = temp_id.split(":")
+			chrom = temp_id1[0]
+			outf.write(rsID + "\t" + chrom+"\t" +str(begin)+"\n")
+
 	except:
 		print "Not Found " + rsID
-		corrected_line = "\t".join(tp_line)
-		outf.write(corrected_line)
+		outf.write(rsID)
 		continue
-	
+
 #print desease
 print "Total variants found " + str(counter)
 print "Total diff coordinates: " + str(diff_coordinates)

@@ -1,3 +1,29 @@
+PATHWAY ANALYSIS
+1) Extracted the kgXref genes and mapped them to the UCSC known genes using the mysql database:
+mysql -h genome-mysql.cse.ucsc.edu -u genome -D hg19 -N -A -e 'select kgXref.kgID, kgXref.geneSymbol,knownGene.name,knownGene.chrom,knownGene.txStart,knownGene.txEnd from kgXref, knownGene where knownGene.name=kgXref.kgID' >genes_positions.txt
+
+2) From kgXref file kept only the genes that have valid entries in the 5th column and mapped it to the UCSC Know Genes:
+Unique genes in kgXref file:
+zcat kgXref.txt.gz | awk -F "\t" '{print $5}' | sort -u | wc -l
+28517
+
+3)Removed the genes that have same names, are on the same chr but don’t overlap even when adding 100kb to begin and end
+
+4) Assigned each snp to the closest gene (within 100kb of begin or end of the snp)
+
+5) If snp is inside multiple genes that overlapped assigned the gene that has the begin closest to the snp
+6) Generated 10k *.pheno files with the casa/control shuffled
+7) Ran association (with covariates) on all of the files
+8) For each simulation file extract the lowest p-values by gene
+9) Per each gene calculated a New_p-value that is the number of simulations that have lower p-value then the real association + 1 divided by 10001
+10) Extracted -log10(New_p_value)
+11) If there are still same gene name on different chroms, kept only the gene with the lowest p-value
+12) Uploaded in GSEA the *.rnk file that has gene_name + “\t” + [-log10(New_p_value)]
+13) Run GSEA on a Pre-Ranked gene list with gene set databases: Hallmarks, Reactome, GO: biological processes
+
+
+
+
 #Extract/combine transcripts by Gene add 100kb to begin end, split 
 #genes by chrom
 #From pathway_analysis folder
@@ -70,14 +96,43 @@ python Remove_duplicate_genes.py
 #Run GSEA 
 Run GSEA on a Pre-Ranked gene list with gene set databases: Hallmarks, Reactome, GO: biological processes
 
-#Reasign genes only 1 gene per snp
+#SECOND TRY!!!! ONE GENE PER SNP
+#Create list of valid genes, verify that the gene is present in the
+#kgXref file 5th column:
+python ./Reasign_genes/Create_list_of_valid_genes.py
+
+#ADD genes to bim file:
+python add_gene_to_bim.py
+
+#Reasign genes only 1 gene per snp (for the overlapping genes add the gene
+#whose begin is closest to the gene)
 python ./Reasign_genes/genes_reasignment.py
 
 #Sort files
+/gpfs/home/gerikson/wellderly/resources/
 sort -k 1n,1 -k 3n,3 gene_names_coordinates_plink_final.txt > gene_names_coordinates_plink_final.sorted.txt
 
 #Still some issues, for the overlapping genes the snps gets the gene that starts first
-#21047 gene_names_coordinates_plink_final.sorted.txt
+#Fixed that issue and we have
+#22883 gene_names_coordinates_plink_final.txt
+#vs before 
+#21047 gene_names_coordinates_plink_final.txt_v1
+#When we were assigning each snp to ALL genes we had
+#26228 gene_names_coordinates_plink.sorted.txt
 
 #Extract minimum p-value per simulation
 python ./Reassign_genes/Create_jobs_extract_min_perGene.py
+
+#Extract smallest p-value real data
+python ./Reasign_genes/Extract_smallest_pvalue_real_data.py
+
+#combine simulations
+python ./Reasign_genes/combine_simulations.py
+22883 FINAL_RESULTS_p_values
+
+#Remove duplicate genes
+python ./Reasign_genes/Remo.py
+22845 FINAL_FINAL_RESULTS_negLog10
+
+
+

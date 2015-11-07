@@ -35,7 +35,7 @@ gene_dict={}
 wtf_gene_dict={}
 wtf_gene = 0
 total_overlapping_genes = 0
-overlapping_genes = {}
+
 for line in infile:
     
     counter += 1
@@ -114,6 +114,8 @@ for line in infile:
         snp_inside_gene = 0
         count_overlaping_genes = 0
         temp_overlap = ""
+                
+        overlapping_genes = {}
         for g in gen:
             try:
                 coords = gene_coord_dict[g]
@@ -123,6 +125,7 @@ for line in infile:
                 #Those genes were already in the generated plink file
                 wtf_gene_dict[g] = wtf_gene
                 continue
+
             begin = int(coords[0]) + 100000
             end = int(coords[1]) - 100000
             #If this snps is actually inside the gene and not adjacent, just pic the gene
@@ -131,28 +134,15 @@ for line in infile:
 
                 #Uncoment this if you want to keep al overlaping genes
                 #Or exclude them, whatever
-                '''
+                
                 final_gene = g
                 if temp_overlap != "":
                     overlapping_genes[temp_overlap]="Y"
                     overlapping_genes[g]="Y"
                 temp_overlap = g
-                '''
-                #Verify if this gene is already present
-                #If present update the end coordinate, start coordinate doesn't need updating
-                try:
-                    coords = gene_dict[g]
-                    coords[1] = counter
-                    gene_dict[g] = coords
-                except:
-                    coords = [counter,counter]
-                    gene_dict[g] = coords
-                break
-                '''
-                snp_inside_gene = 1
+                
+                snp_inside_gene += 1
                 count_overlaping_genes += 1
-                '''
-                #break
 
             else:
                 #Extract the minimum distance to either begin or end              
@@ -182,8 +172,45 @@ for line in infile:
             except:
                 coords = [counter,counter]
                 gene_dict[gene] = coords
+        #if the snp is inside gene and there is only one gene overlapping it
+        elif snp_inside_gene == 1 :
+            try:
+                coords = gene_dict[final_gene]
+                coords[1] = counter
+                gene_dict[final_gene] = coords
+            except:
+                coords = [counter,counter]
+                gene_dict[final_gene] = coords
         else:
-            if count_overlaping_genes > 2:
+            #if multiple genes overlap the same snp, pick the one where the snp
+            #is closest to the begin
+            dist_to_begin_array = []
+            gene_array = []
+            for gene in overlapping_genes:
+                coords = gene_coord_dict[gene]
+                begin = int(coords[0]) + 100000
+                dist_to_begin = abs(int(snppos) - begin)
+                dist_to_begin_array.append(dist_to_begin)
+                gene_array.append(gene)
+
+            min_dist_to_begin = min(dist_to_begin_array)
+
+            #Extract the index of the dist to begin and it's gene
+            final_gene = ""
+            for index, val in enumerate(dist_to_begin_array):
+                if val == min_dist_to_begin:
+                    final_gene = gene_array[index]
+
+            #Edit the coordinates of the final gene
+            try:
+                coords = gene_dict[final_gene]
+                coords[1] = counter
+                gene_dict[final_gene] = coords
+            except:
+                coords = [counter,counter]
+                gene_dict[final_gene] = coords
+
+            if count_overlaping_genes > 1:
                 #print "overlapping genes " + str(count_overlaping_genes) 
                 total_overlapping_genes += 1
                 #print overlapping_genes
