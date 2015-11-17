@@ -8,10 +8,10 @@ import os, sys, gzip, datetime
 
 
 association_snps=open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/cognitive_snps/real_data.plink.association")
-outfile=open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/cognitive_snps/snp_position_array", "w")
-found_snps=open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/cognitive_snps/found_snpID_position", "w")
+#outfile=open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/cognitive_snps/snp_position_array", "w")
+found_snps=open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/cognitive_snps/found_snpID_position_p-value", "w")
 snp_position_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/cognitive_snps/snpID_position.sorted.txt"
-#missing_snps=open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/cognitive_snps/missing_snpID", "w")
+
 # Prep
 print 'Prepping snp position file...'
 
@@ -49,16 +49,16 @@ for line in association_snps:
             if chrom == ch:
                 found +=1
                 #Extracting 1 becouse arrays are 0 based easier for next step
-                outfile.write(str(counter-1)+"\n")
-                found_snps.write(rsID+"\t"+ch+"\t"+begin_poz+"\n")
+                #outfile.write(str(counter-1)+"\n")
+                found_snps.write(rsID+"\t"+ch+"\t"+begin_poz+"\t"+tp_line[8]+"\n")
+                
         except:
-            #missing_snps.write(rsID+"\n")
             continue
 
 print "Total snps in snp dictionary " + str(len(snp_dict))
 print "Total snps found " + str(found)
 association_snps.close()
-outfile.close()
+#outfile.close()
 found_snps.close()
 
 

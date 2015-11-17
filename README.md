@@ -130,7 +130,8 @@ python ./pathway_analysis/CognitiveSnps/Extract_snp_position.py
 python ./pathway_analysis/CognitiveSnps/Create_jobs_extract_sim_pvalues.py
 
 
-
+*Count 36mers:
+python ./Count_filters/Create_jobs_count_36mers.py
 
 
 

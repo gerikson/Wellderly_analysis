@@ -46,6 +46,7 @@ dat <- read.table("test-PCA.eigenvec", F)
 
 #First 511 are wellderly in red up top, inova in blue behind
 COLOR <- c(rep("blue", times=dim(dat)[1]-511), rep("red", times=511))
+'''
 p <- ggplot() +
     geom_point(aes(dat$V3, dat$V4), col=COLOR) +
     xlab("pc1") +
@@ -53,6 +54,10 @@ p <- ggplot() +
 p
 dev.off()
 q()
+'''
+plot(dat$V3, dat$V4, col=COLOR, pch=16, xlab="Principal Component 1", ylab="Principal Component 2", las=1, xaxs="i", yaxs="i", bty="l", xlim=c(-0.04,0.2), ylim=c(-0.2,0.06))
+
+dev.off()
 
 # create phenotype file in R #
 # wellderly = "affected" #
@@ -92,7 +97,7 @@ library(qqman)
 
 #in R
 #Load in final association with everything filtered out
-snp_names <- read.table("final_association.txt",T)
+snp_names <- read.table("Wellderly_final_association.txt",T)
 #Extract N/As
 final_results <- snp_names[!is.na(snp_names$P),]
 
@@ -102,13 +107,22 @@ write.table(max_results,"smallest_pvalues.txt", quote=FALSE, row.names=FALSE, co
 
 tiff("manhattan.tiff", width=4000, height=2000, res=300, compression="lzw")
 #manhattan(final_results, col = c("red1", "green2","blue2","cyan","blueviolet","yellow","snow3","gray0"))
-manhattan(final_results, col = c("red1","blue2","darkorange1","blueviolet","green2","gray0"))
+#manhattan(final_results, col = c("red1","blue2","darkorange1","blueviolet","green2","gray0"))
+
+par(mar=c(5.0,5.0,5.0,5.0))
+manhattan(final_results, col = c("red1","blue2","darkorange1","blueviolet","green2","gray0"), cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
 dev.off()
+
+#With highlighted SNPs
+snps_ofInterest <- read("snps_of_interest")
+
+manhattan(final_results, highlight = snpI, cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
 
 #Make QQ plot
 #in R
 
-results <- read.table("final_association.txt", T)
+#results <- read.table("final_association.txt", T)
+results <- read.table("Wellderly_final_association.txt", T)
 #filter by LD
 snps_ld <- read.table("test-MAF_LD_pruned.bim")
 #keep only the snps in ld
@@ -118,6 +132,7 @@ final_results <- pruned_results[!is.na(pruned_results$P),]
 #[1] 518609      9
 obs_P <- -log10(final_results$P[order(final_results$P, decreasing=FALSE)])
 exp_P <- -log10(c(1:length(obs_P))/length(obs_P))
+'''
 library(ggplot2)
 p <- ggplot() +
     geom_point(aes(exp_P, obs_P)) +
@@ -126,6 +141,10 @@ p <- ggplot() +
 
 tiff("qq_plot.tiff", width=2000, height=2000, res=300, compression="lzw")
 p
+'''
+tiff("qq_plot.tiff", width=2000, height=2000, res=300, compression="lzw")
+plot(c(0,7), c(0,7), col="red", lwd=3, type="l", xlab="Expected (-logP)", ylab="Observed (-logP)", xlim=c(0,7), ylim=c(0,7), las=1, xaxs="i", yaxs="i", bty="l")
+points(exp_P, obs_P, bg="black") 
 dev.off()
 
-
+plot(c(0,7), c(0,7), col="red", lwd=3, type="l", xlab="Expected Chi-square", ylab="Observed Chi-square", xlim=c(0,7), ylim=c(0,7), las=1, xaxs="i", yaxs="i", bty="l")

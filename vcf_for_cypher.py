@@ -3,8 +3,8 @@ import gzip, sys, datetime
 def main(chrom):
     #infile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_inova_withCorrectGenotypes/wellderly_inova."+chrom+".vcf.gz"
     #outfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/data_for_cypher/wellderly_inova_ noGenotypes_"+chrom+".vcf.gz"
-    infile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/chr22/wellderly_all_filters_chr22.vcf"
-    outfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_annotation/chr22/wellderly_all_filters_chr22.vcf"
+    infile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/"+chrom+"/wellderly_all_filters_"+chrom+".vcf"
+    outfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_annotation/"+chrom+"/wellderly_all_filters_"+chrom+".vcf"
     counter = 0
     buffered = ""
     i = open(infile)

@@ -162,27 +162,6 @@ class Overlap(object):
 				else:
 					return False
 
- 				'''
-                seqL1 = float(e1-s1+1)
-                seqL2 = float(e2-s2+1)
- 
-                if (s1<=s2) and (e1<e2) and (e1>=s2):
-                        overlap = float(e1-s2+1)
-                        ovrPerc = min((overlap/seqL1),(overlap/seqL2))*100.0
-                elif (s1<=s2) and (e1>=e2):
-                        overlap = seqL2
-                        ovrPerc = (overlap/seqL1)*100.0
-                elif (s1>s2) and (s1<=e2) and (e1>=e2):
-                        overlap = float(e2-s1+1)
-                        ovrPerc = min((overlap/seqL1),(overlap/seqL2))*100.0           
-                elif (s1>s2) and (e1<e2):
-                        overlap = seqL1
-                        ovrPerc = (overlap/seqL2)*100.0
-                else:
-                        ovrPerc = 0.0
- 
-                return ovrPerc 
-                '''
  
 
 
@@ -211,11 +190,11 @@ def main(chrom):
 
     ch = "1"
 
-    kmer_file="/gpfs/home/gerikson/wellderly/filter_data/24kmer/byChrom/unique_24mer" + str(chrom) + ".txt"
+    kmer_file="/gpfs/home/gerikson/wellderly/filter_data/24mer/byChrom/unique_24mer" + str(chrom) + ".txt"
     input_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_rare_variants/vcf_rareVariant."+chrom+".vcf.gz"
     
     output_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_rare_variants/24mer_ALLcluster_filtres/vcf_rareVariant."+chrom+".vcf.gz"
-    clustered_file = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_ALL_clustered/ALL_clustered."+chrom+".txt.gz"
+    clustered_file = gzip.open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_ALL_clustered/ALL_clustered."+chrom+".txt.gz")
     counter_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_rare_variants/24mer_ALLcluster_filtres/counter.txt"
 
     repeatMask_begin = []
@@ -235,13 +214,14 @@ def main(chrom):
     
     print "Prepping clustered file"
     clustered_dict = {}
-    with open(clustered_file) as f:
-        for line in f:
-            if line[0] != '#':
-                items = line.strip().split('\t')
-                clustered_dict[items[1]] = items[3]
 
-
+    for line in clustered_file:
+        try:
+            items = line.strip().split()
+            clustered_dict[items[1]] = items[3]
+        except:
+            print line
+    clustered_file.close()
 
     print 'Calculating...'
 
