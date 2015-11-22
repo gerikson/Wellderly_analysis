@@ -1,5 +1,8 @@
 """
-Counts repeats by AF
+Counts missing genotype
+Updated to exclude the related individuals
+Set VQLOW to missing
+And extract the counts again
 
 """
 import os, sys, gzip, datetime
@@ -9,10 +12,21 @@ def main(chrom):
 
 	input_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly/wellderly_inova.VQHIGH.0.95white."+str(chrom)+".vcf.gz"
 	counter_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_count_filters/missing_genotype.txt"
-	filter_file ="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly_clustered_repeats_homopoly_etc_missing/filter_missing_genotype.txt.gz"
+	#filter_file ="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly_clustered_repeats_homopoly_etc_missing/filter_missing_genotype.txt.gz"
+	filter_file = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/final_filter_file/filter_wellderly_missingGeno"+str(chrom)+".txt.gz"
 	
+	relatedfile = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_allFilters_36kmer_snpsOnly_AF0.01/eliminate_individuals.txt"
+
+	w = open(relatedfile)
+	header = []
+	#index the whites
+	ln = w.readline()
+	ln = ln.strip()
+	#Create dictionary here instead
+	related_id = ln.split("\t")
+	w.close()
+	header = []
 	f = gzip.open(input_filename)
-	c = open(counter_file, "a")
 	filt = gzip.open(filter_file, "w")
 
 	counter = 0
@@ -35,15 +49,24 @@ def main(chrom):
 
 		if line[:2] == "##":
 			print "header"
+			continue
 		elif line[:1] == "#":
-			tp_line = line.split("\t")
-			for i in tp_line:
-				if i.endswith("DID"):
-					total_wellderly += 1
-				elif i.endswith("ASM"):
-					total_inova += 1
-			print "Total Wellderly " + str(total_wellderly)
-			print "Total inova " + str(total_inova)
+
+			line = line.strip()
+			header = line.split("\t")
+			final_header = "\t".join(header[:9])
+			counter_white = 0
+			for index, gen in enumerate(header[9:]):
+				index = index +9
+				#Extract whites only
+				if gen in related_id:
+					continue
+				else:
+					final_header = final_header + "\t" + gen
+					counter_white += 1
+			final_header = final_header + "\n"
+			print "# of related " + str(counter_white)
+			continue
 		else:
 
 			counter += 1
@@ -64,6 +87,50 @@ def main(chrom):
 			
 			well_missing = 0
 			inova_missing = 0
+
+
+			#Remove related individuals
+			noRelated_line = tp_line[:9]
+			for index, gen in enumerate(tp_line[9:]):
+				index = index +9
+				indiv_name = header[index]
+				if indiv_name in related_id:
+					continue
+				else:
+					noRelated_line.append(gen)
+
+			#print "Removed related" 
+
+			#Replace VQLOW and count missing
+			well_missing = 0
+			inova_missing = 0
+			for index,i in enumerate(noRelated_line):
+				if index > 8:
+					var = i.split(":")
+					geno = var[0]
+					geno_split = geno.split("/")
+					if "VQLOW" in i:
+						#print "VQLOW"
+						if var[3]=="VQLOW":
+						    geno_split[0]='.'
+						if var[4]=="VQLOW":
+						    geno_split[1]='.'
+						var[0]="/".join(geno_split)
+						#print "new geno " + ":".join(var)
+						noRelated_line[index] = ":".join(var)
+
+					if geno_split[0] == '.' or geno_split[1] == '.':
+						if index < 511:
+							well_missing += 1
+						else:
+							inova_missing += 1
+
+
+
+
+
+			'''
+			#This was the original version
 			for index, gen in enumerate(tp_line[9:]):
 				index = index + 9
 				#geno = gen.split(":")
@@ -75,6 +142,7 @@ def main(chrom):
 						inova_missing += 1
 			#print "wellderly missing " + str(well_missing)
 			#print "inova missing " + str(inova_missing)
+			'''
 
 			if well_missing > 51 or inova_missing >68:
 				filter_block = filter_block + "\tYES\n" 
@@ -235,7 +303,7 @@ def main(chrom):
 	
 	print "Total lines " + str(counter)
 	print "Total good lines " + str(good_lines)
-
+	c = open(counter_file, "a")
 	AF_counter = chrom + "\t" + str(counter) + "\t" + str(missing_counter) + "\t" + str(well_001) + "\t" + str(well_005) + "\t" + str(well_005_plus) + \
 			"\t" + str(inova_001) + "\t" + str(inova_005) + "\t" + str(inova_005_plus) + "\n"
 

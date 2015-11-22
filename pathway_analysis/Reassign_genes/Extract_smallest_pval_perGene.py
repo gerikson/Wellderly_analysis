@@ -15,7 +15,8 @@ def main(sample):
 
 
 	#gene_coord_file=open("/gpfs/home/gerikson/wellderly/resources/gene_names_coordinates_plink.sorted.txt")
-	gene_coord_file=open("/gpfs/home/gerikson/wellderly/resources/gene_names_coordinates_plink_final.sorted.txt")
+	#gene_coord_file=open("/gpfs/home/gerikson/wellderly/resources/gene_names_coordinates_plink_final.sorted.txt")
+	gene_coord_file=open("/gpfs/home/gerikson/wellderly/resources/gene_names_coordinates_plink_final_exons.sorted.txt")
 	out=min_pvalue+str(sample)+".min_p-values_per_gene.txt"
 
 	outputf = open(out,"w")

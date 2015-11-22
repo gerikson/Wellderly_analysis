@@ -4,7 +4,8 @@ This needs module load python/2.6.5 in .bash_profile
 """
 def create_job_file(sample):
 
-    command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/Count_filters/count_missing_geno.py chr" + str(sample)
+    
+    command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/Calculate_AF_cases_controls.py chr" + str(sample)
     jobfile = jobs_folder + str(sample) + ".job"         
     outjob = open(jobfile, 'w')
     outjob.write("#!/bin/csh\n")                    
@@ -30,7 +31,7 @@ print datetime.datetime.now().time()
 
 counter = 0
 QSUB = "qsub -q stsi -M gerikson@scripps.edu -l mem=8G -l cput=9600:00:00 -l walltime=500:00:00 "
-jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/count_missing."
+jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/AF_cases_controls."
 
 #create_job_file("22")
 

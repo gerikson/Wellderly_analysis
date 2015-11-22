@@ -12,8 +12,11 @@ def main(chrom):
 	input_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly/wellderly_inova.VQHIGH.0.95white."+str(chrom)+".vcf.gz"
 	counter_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_count_filters/filter_covereage_wellderly.txt"
 	coverage_file="/gpfs/group/torkamani/bhuvan/wellderly/coverage/CoverageInfo/MediansCompiled/medians_chrm_"+str(ch)+".csv"
-	filter_file ="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly_clustered_repeats_homopoly_etc_missing_cov/filter_wellderly_covereage."+str(chrom)+".txt.gz"
-	
+	#filter_file ="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly_clustered_repeats_homopoly_etc_missing_cov/filter_wellderly_covereage."+str(chrom)+".txt.gz"
+	filter_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/final_filter_file/filter_wellderly_coverage."+str(chrom)+".txt.gz"
+
+	inova_coverage_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/inova_median_coverage/MediansCompiled/medians_chrm_"+str(ch)+".csv"  
+
 	f = gzip.open(input_filename)
 	c = open(counter_file, "a")
 	filt = gzip.open(filter_file, "w")
@@ -25,7 +28,17 @@ def main(chrom):
 	for i in cov_file:
 		ln = i.split(",")
 		covereage[ln[0]] = ln[1]
-	print "Dictionary created"
+	print "Dictionary created, lenght " + str(len(covereage))
+
+	cov_file_in = open(inova_coverage_file)
+	covereage_inova = {}
+	print "Start creating dictionary"
+	for i in cov_file_in:
+		ln = i.split(",")
+		covereage_inova[ln[0]] = ln[1]
+	print "Dictionary created, lenght " + str(len(covereage_inova))
+	cov_file_in.close()
+
 
 	counter = 0
 	good_lines = 0
@@ -84,8 +97,15 @@ def main(chrom):
 				print "coverage not found"
 				print tp_line[:5]
 
+			cov_inova = "0.0"
+			try:
+				cov_inova = covereage_inova[pos]
+			except:
+				print "coverage not found"
+				print tp_line[:5]
 
-			if float(cov) < 10.0 or float(cov) > 100.0:
+
+			if float(cov) < 10.0 or float(cov) > 100.0 or float(cov_inova) < 10.0 or float(cov_inova) > 100.0:
 
 				filter_block = filter_block + "\tYES\n" 
 

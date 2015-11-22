@@ -1,5 +1,5 @@
 """
-Filter by HWE
+Count the HWE
 
 """
 import os, sys, gzip, datetime
@@ -142,17 +142,18 @@ def main(chrom):
     
 
 
-    workingdir="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/"+str(chrom) + "/"
+    workingdir="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/hwe_temp-folder/"
     #os.system("mkdir "+workingdir)
-    input_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/"+str(chrom)+"/wellderly_all_filters_"+str(chrom)+".vcf.gz"
-    output_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/wellderly_all_filters_withHWE"+str(chrom)+".vcf.gz"
-    counter_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/counter.txt"
+    input_filename="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_filtered_VQHIGH_whiteOnly/wellderly_inova.VQHIGH.0.95white."+str(chrom)+".vcf.gz"
+    filter_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/final_filter_file/filter_wellderly_hwe."+str(chrom)+".txt.gz"
+    counter_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_count_filters/filter_hwe_wellderly.txt"
+
     pheno_file="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_association/final_assoc/final_vcf_allChrom_snps_AF0.01.pheno"
 
 
     c = open(counter_file, "a")
 
-  
+    '''
     os.system("cd "+workingdir)
     plink_command="/gpfs/home/nwineing/plink --vcf "+input_filename+" --double-id --vcf-half-call m --make-bed --out "+workingdir+chrom
     os.system(plink_command)
@@ -164,13 +165,13 @@ def main(chrom):
     os.system(rm_snp)
     os.system("mv "+workingdir+chrom+".temp "+workingdir+chrom+".bim")
     
-    run_hwe = "/gpfs/home/nwineing/plink --bfile "+workingdir+chrom+" -hardy --allow-no-sex --pheno "+pheno_file +" --out "+workingdir+"plink"
+    run_hwe = "/gpfs/home/nwineing/plink --bfile "+workingdir+chrom+" -hardy --allow-no-sex --pheno "+pheno_file +" --out "+workingdir+chrom+".plink"
     os.system(run_hwe)
     print "End hwe extraction"
-
+    '''
     
 
-    hwe_file=open(workingdir+"plink.hwe")
+    hwe_file=open(workingdir+chrom+".plink.hwe")
     remove_dict = {}
     counter = 0
     removed_var = 0
@@ -181,25 +182,30 @@ def main(chrom):
         else:
             tp_l = i.strip().split()
             #print "Lenght line: "+ str(len(tp_l))
-            p_val = float(tp_l[8])
+            #If the entry is nan, count this as hwe
+            try:
+                p_val = float(tp_l[8])
 
-            #Keep only the variants that are bellow 1e-4
-            if p_val <0.0001:
+                #Keep only the variants that are bellow 1e-4
+                if p_val <0.0001:
+                    d_k = tp_l[1].strip()
+                    #print d_k
+                    remove_dict[d_k] = p_val
+                    removed_var += 1
+            except:
                 d_k = tp_l[1].strip()
-                #print d_k
                 remove_dict[d_k] = p_val
-                removed_var += 1
+                removed_var +=1
 
     hwe_file.close()
     print "Total lines in the hwe file "+ str(counter)
     print "Total lines with hwe < 0.0001 "+ str(removed_var)
     counter = 0
-    good_lines = 0
-    block = ""
     f = gzip.open(input_filename)
-    o = gzip.open(output_filename, 'w')
+
+
     counter = 0
-    good_lines = 0
+    filtered_lines = 0
 
     well_001 = 0
     well_005 = 0
@@ -211,6 +217,7 @@ def main(chrom):
 
     total_wellderly = 0
     total_inova = 0
+    filt = gzip.open(filter_file, "w")
     filt.write("Chrom\tbegin\tRef\tAlt\tHWE\n")
     filter_block = ""
 
@@ -218,34 +225,30 @@ def main(chrom):
 
         if line[0] == "#":
             print "header"
-            o.write(line)
             continue
 
         counter += 1
 
         if counter%100 == 0:
-        	o.write(block)
-        	#filt.write(filter_block)
-        	block = ""
-        	#filter_block = ""
-        	o.flush()
+            filt.write(filter_block)
+            filter_block = ""
+            filt.flush()
 
         if counter%10000 == 0:
         	print datetime.datetime.now().time()
         	print "total lines " + str(counter)
-        	print "Good lines " + str(good_lines)
+        	print "Filtered lines " + str(filtered_lines)
         	sys.stdout.flush()
 
 
         tp_line = line.strip().split("\t")
+        filter_block = filter_block + tp_line[0]+"\t"+tp_line[1]+"\t"+tp_line[3]+"\t"+tp_line[4]
         dict_key = tp_line[1]+"-"+tp_line[3]
         #If this variant is in the hwe datatset
         try:
             val = remove_dict[dict_key]
-            print "removed variant"
-            continue
-        except:
-            good_lines += 1
+            filter_block = filter_block + "\tYES\n"
+            filtered_lines += 1
             well_AF, inova_AF = extract_AF(tp_line)
             if well_AF < 0.01:
                 well_001 += 1
@@ -260,15 +263,19 @@ def main(chrom):
                 inova_005 += 1
             else:
                 inova_005_plus +=1
-            block = block+line
+            continue
+        except:
+            filter_block = filter_block + "\t\n" 
+
+
 
     
     f.close()
-    o.write(block)
-    block = ""
-    o.flush()
-    o.close()
-    AF_counter = chrom + "\t" + str(counter) + "\t" + str(good_lines) + "\t" + str(well_001) + "\t" + str(well_005) + "\t" + str(well_005_plus) + \
+    filt.write(filter_block)
+    filter_block = ""
+    filt.flush()
+    filt.close()
+    AF_counter = chrom + "\t" + str(counter) + "\t" + str(filtered_lines) + "\t" + str(well_001) + "\t" + str(well_005) + "\t" + str(well_005_plus) + \
         "\t" + str(inova_001) + "\t" + str(inova_005) + "\t" + str(inova_005_plus) + "\n"
 
     print AF_counter

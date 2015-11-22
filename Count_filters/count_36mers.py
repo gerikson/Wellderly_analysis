@@ -249,7 +249,7 @@ def main(chrom):
 
 	total_wellderly = 0
 	total_inova = 0
-	filt.write("Chrom\tbegin\tRef\tAlt\t36mers\n")
+	filt.write("Chrom\tbegin\tRef\tAlt\t36mer\n")
 	filter_block = ""
 
 

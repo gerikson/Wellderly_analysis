@@ -55,6 +55,7 @@ p
 dev.off()
 q()
 '''
+tiff("pca.tiff", width=3, height=3, res=300, units = 'in', compression="lzw")
 plot(dat$V3, dat$V4, col=COLOR, pch=16, xlab="Principal Component 1", ylab="Principal Component 2", las=1, xaxs="i", yaxs="i", bty="l", xlim=c(-0.04,0.2), ylim=c(-0.2,0.06))
 
 dev.off()

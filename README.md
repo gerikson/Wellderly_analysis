@@ -133,9 +133,20 @@ python ./pathway_analysis/CognitiveSnps/Create_jobs_extract_sim_pvalues.py
 *Count 36mers:
 python ./Count_filters/Create_jobs_count_36mers.py
 
+*Count hwe:
+python ./Count_filters/Create_jobs_count_hwe.py
 
+*Filter out HWE:
+python ./Create_jobs/Create_job_filter_HWE.py
 
+*Split annotations by chromosomes
+python ./Create_jobs/Create_jobs_split_annotation_by_chrom.py
 
+*Calculate the AF on the filtered out dataset with plink:
+python ./Create_jobs/Create_jobs_calcAF_cases_controls.py
+
+*Suplimental table 2
+python ./Create_jobs/Count_wellderly_characteristics.py
 
 
 
