@@ -15,14 +15,14 @@ def main(sample):
 
 	real_plink="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/results.assoc.logistic"
 	#min_pvalue="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/REAL_DATA_smallest_p_value_per_gene.txt"
-	min_pvalue="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/REAL_DATA_smallest_p_value_per_gene_exon.txt"
+	min_pvalue="/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/REAL_DATA_smallest_p_value_per_gene_exon_noLD.txt"
 
 	#gene_coord_file=open("/gpfs/home/gerikson/wellderly/resources/gene_names_coordinates_plink_final.sorted.txt")
-	gene_coord_file=open("/gpfs/home/gerikson/wellderly/resources/gene_names_coordinates_plink_final_exons.sorted.txt")
+	#gene_coord_file=open("/gpfs/home/gerikson/wellderly/resources/gene_names_coordinates_plink_final_exons.sorted.txt")
+	gene_coord_file=open("/gpfs/home/gerikson/wellderly/resources/gene_names_coordinates_plink_final_noLD.txt")
 	out=min_pvalue
 
 	outputf = open(out,"w")
-
 	extract_pValue_column="awk '{print $9}' "+real_plink+ " >" + min_pvalue+".temp"
 	os.system(extract_pValue_column)
 
@@ -44,13 +44,21 @@ def main(sample):
 	for line in gene_coord_file:
 		tp_line = line.strip().split("\t")
 		#If only one snp in this gene, extract p_value of that gene
-		if int(tp_line[2]) == int(tp_line[3]):
+		if len(tp_line) == 3:
 			smallest_p_value_per_gene = p_value_array[int(tp_line[2])]
 			final_line = tp_line[0] + "\t" + tp_line[1] + "\t" + str(smallest_p_value_per_gene) + "\n"
 		else:
-			smallest_p_value_per_gene = min(p_value_array[int(tp_line[2]):int(tp_line[3])])
+			indexed_snps = tp_line[2:]
+			array_of_gene_pvalues = []
+			for sn in indexed_snps:
+				#append the p-values of the indexed snp
+				try:
+					array_of_gene_pvalues.append(p_value_array[int(sn)])
+				except:
+					print sn
+			smallest_p_value_per_gene = min(array_of_gene_pvalues)
 			final_line = tp_line[0] + "\t" + tp_line[1] + "\t" + str(smallest_p_value_per_gene) + "\n"
-		#print final_line
+
 		outputf.write(final_line)
 
 	#os.system("rm "+min_pvalue+str(sample)+".p-values.txt")

@@ -134,5 +134,9 @@ python ./Reasign_genes/combine_simulations.py
 python ./Reasign_genes/Remo.py
 22845 FINAL_FINAL_RESULTS_negLog10
 
+#Filter out the variants in LD
+python ./No_LD/Gene_reasignment_noLD.py
+
+python ./No_LD/Create_jobs_extract_min_perGene.py
 
 

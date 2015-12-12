@@ -17,11 +17,11 @@ import os, sys, gzip, datetime, math
 
 def main():
 	#real_p_values = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/REAL_DATA_smallest_p_value_per_gene.txt")
-	real_p_values = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/REAL_DATA_smallest_p_value_per_gene_exon.txt")
+	real_p_values = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/REAL_DATA_smallest_p_value_per_gene_exon_noLD.txt")
 	path_to_input_file = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/simulation/min_per_gene/"
 
-	results = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/final_results/RESULTS_p_values_exons","w")
-	log_results = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/final_results/RESULTS_negLog10_exons","w")
+	results = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/final_results/RESULTS_p_values_noLD","w")
+	log_results = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/final_results/RESULTS_negLog10_noLD","w")
 
 
 	#Create dictionary of real p_values

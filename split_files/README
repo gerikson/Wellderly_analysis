@@ -1,0 +1,2 @@
+*Split files in 10000 files
+gerikson@stsia0808:~/scripts/Wellderly_scripts/GitHub/split_files> python Create_jobs_split_files.py

@@ -11,9 +11,9 @@ import os, sys, gzip, datetime, math
 def main():
 
 
-	results = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/final_results/RESULTS_p_values_exons.noChrom")
+	results = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/final_results/RESULTS_negLog10_noLD.noChrom")
 	#final_results = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/final_results/FINAL_FINAL_RESULTS_p_values", "w")
-	log_results = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/final_results/FINAL_FINAL_RESULTS_negLog10_exon.noChrom.rnk", "w")
+	log_results = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/pathway_analysis/final_results/FINAL_FINAL_RESULTS_negLog10_exon.noChrom.noLD.rnk", "w")
 
 
 	real_pVal_dict = {}

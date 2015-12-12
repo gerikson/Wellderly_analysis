@@ -1,5 +1,6 @@
 '''
 Start calculating the minimum of each gene for all 10k jobs of the simulation
+No LD snps
 '''
 
 import os, sys, gzip, datetime
@@ -10,16 +11,16 @@ print datetime.datetime.now().time()
 
 counter = 0
 QSUB = "qsub -q workq -M gerikson@scripps.edu -l mem=8G -l cput=9600:00:00 -l walltime=500:00:00 "
-jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/extract_min_pvalue/"
+jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/extract_min_pvalue_v2/"
 
 
-#for sample in range(1,10001):
-for sample in [1738, 1742]:
+#for sample in range(4,10001):
+for sample in [934]:
 	if sample%100 == 0:
 		print str(sample)
 
 
-	command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/pathway_analysis/Reassign_genes/Extract_smallest_pval_perGene.py " + str(sample)
+	command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/pathway_analysis/No_LD/Extract_smallest_p-value_perGene_noLD.py " + str(sample)
 	jobfile = jobs_folder + str(sample) + ".job"         
 	outjob = open(jobfile, 'w')
 	outjob.write("#!/bin/csh\n")                    

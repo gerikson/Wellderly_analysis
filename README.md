@@ -113,12 +113,27 @@ python generate_pheno_files.py
 
 *For pathway analysis read ./pathway_analysis/pathway_analysis.sh
 
+TABLE 1 and 2
 *Extract all filters:
 python Create_jobs_apply_all_filters.py
 
 FOR Rare variants
 *Extracting ALL clustered variants:
 python ./Rare_variant_analysis/Create_jobs_remove_ALL_clustered.py
+
+*Extract the variants removed by allele depth filter
+python ./Table2/Create_jobs_filter_by_AD.py
+
+*Extract the AF after all filters except AD filter after removing all of the variants with 0.0 AF in both populations
+python ./Table2/Create_jobs_extract_AF_by_var.py
+
+*Generate table2 counts
+python ./Table2/Create_jobs_table2.py
+
+
+
+
+
 
 
 
@@ -148,7 +163,10 @@ python ./Create_jobs/Create_jobs_calcAF_cases_controls.py
 *Suplimental table 2
 python ./Create_jobs/Count_wellderly_characteristics.py
 
+*Pathway analysis with variants inside genes only:
+python ./pathway_analysis/Reassign_genes/combine_simulations.py
 
+*Redo pathway analysis
 
 
 * Apply the filters: missing/uncertain genotype > 10 perc in either wellderly or inova, covereage <10 or >100, whites only (testing 0.85 white and 0.95)
