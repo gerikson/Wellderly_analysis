@@ -135,7 +135,7 @@ def main(chrom):
     c=open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_count_filters/final/FINAL_counter.txt", "a")
     output_filename = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/FINAL_AF/final_"+chrom+".txt.gz"
 
-    block = ""
+
     AF_block = ""
     f = gzip.open(input_filename)
     o = gzip.open(output_filename, 'w')
@@ -216,7 +216,7 @@ def main(chrom):
                 inova_005_plus +=1
 
             AF_block = AF_block + "\t".join(tp_line[:5]) + "\t" +str(well_AF) + "\t" +str(inova_AF) + "\n"
-            block = block + line
+
             good_lines += 1
             continue
 

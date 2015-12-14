@@ -30,6 +30,12 @@ counter = 0
 QSUB = "qsub -q stsi -M gerikson@scripps.edu -l mem=8G -l cput=9600:00:00 -l walltime=500:00:00 "
 jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/table2/extract_AF_by_var."
 
-
+'''
 for sample in range(1,23):    
     create_job_file(sample)
+'''
+create_job_file(1)
+create_job_file(3)
+create_job_file(5)
+#create_job_file(6)
+create_job_file(7)
