@@ -18,13 +18,13 @@ def create_job_file(sample):
 	#Repeat
 	#jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/repeat."
 	#Homopolymer
-	#jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/homopolymer."	
+	jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/homop."	
 	#Micrositelite
 	#jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/microsite."
 	#SegDup
 	#jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/SegDup."
 	#RepeatMask
-	jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/RepeatMask."
+	#jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/RepeatMask."
 
 
 	for l in cf:
@@ -42,7 +42,8 @@ def create_job_file(sample):
 				#command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/Count_repeats_microsat_etc_by_part.py " + str(sample) + " "+ str(part)
 				#command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/Count_segDup_byParts.py " + str(sample) + " "+ str(part)
 				#command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/Count_microsite_byPart.py " + str(sample) + " "+ str(part)
-				command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/count_repeatMask_byPart.py " + str(sample) + " "+ str(part)
+				#command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/count_repeatMask_byPart.py " + str(sample) + " "+ str(part)
+				command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/count_homopoly_byPart.py " + str(sample) + " "+ str(part)
 
 				jobfile = jobs_folder + str(sample) + ".job"         
 				outjob = open(jobfile, 'w')
@@ -69,10 +70,10 @@ def create_job_file(sample):
 if __name__ == '__main__':
 
 	print "Python Version: " + sys.version
-	'''
-	create_job_file("chr4")
-	create_job_file("chr5")
-	create_job_file("chr6")
+	
+	create_job_file("chr1")
+	create_job_file("chr2")
+	create_job_file("chr7")
 	'''
 	#For homopolymer run all of the data, I think it might have been a mistake in the original dataset
 	#RepeatMask gets all chroms by part too, no ideea what I did that last time, ma
@@ -81,4 +82,4 @@ if __name__ == '__main__':
 	for sample in range(1,23):   
 		chrom = "chr"+str(sample)
 		create_job_file(chrom)
-	
+	'''

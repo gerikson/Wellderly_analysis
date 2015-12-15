@@ -7,8 +7,9 @@ def create_job_file(sample):
     #command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/Initial_high_quality_variants_count.py chr" + str(sample)
     #command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/count_coverage.py chr" + str(sample)
     #command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/Count_repeats_microsat_etc.py chr" + str(sample)
-    command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/Count_hardyWeinberg.py chr" + str(sample)
-
+    #command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/Count_hardyWeinberg.py chr" + str(sample)
+    #command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/count_36mers.py chr" + str(sample)
+    command = "python /gpfs/home/gerikson/scripts/Wellderly_scripts/GitHub/split_files/Count_final_after_allFilters.py chr" + str(sample)
     jobfile = jobs_folder + str(sample) + ".job"         
     outjob = open(jobfile, 'w')
     outjob.write("#!/bin/csh\n")                    
@@ -44,7 +45,10 @@ QSUB = "qsub -q stsi -M gerikson@scripps.edu -l mem=32G -l cput=9600:00:00 -l wa
 #jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/microsat.count"
 #jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/SegDup.count"
 #jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/RepeatMask.count"
-jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/HWE.count"
+#jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/HWE.count"
+#jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/36mer.count"
+jobs_folder = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/jobfolder/count_filters/final/split_files/ALLfilters_noAD.count"
+
 
 #for sample in range(1,23):   
 for sample in range(1,23):   

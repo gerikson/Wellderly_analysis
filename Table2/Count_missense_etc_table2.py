@@ -25,7 +25,8 @@ def main(chrom):
 	#plink_filename_freq_wellderly=open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/Plink_files/"+str(chrom)+".wellderly.frq")
 	#plink_filename_freq_inova=open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/Plink_files/"+str(chrom)+".inova.frq")	
 	
-	AF_file = gzip.open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/AF/final_"+chrom+".txt.gz")
+	#AF_file = gzip.open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/AF/final_"+chrom+".txt.gz")
+	AF_file = gzip.open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/vcf_wellderly_ALL_filters/FINAL_AF/final_"+chrom+".txt.gz")
 
 	annotation_files = []
 	annotation_file1 = "/gpfs/group/stsi/data/projects/wellderly/GenomeComb/annotations/byChrom/" +str(chrom) +".txt.gz"
