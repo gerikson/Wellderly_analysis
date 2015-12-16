@@ -40,10 +40,27 @@ def main(chrom):
 	ins_count = 0
 	del_count = 0
 	other_count = 0
+	
+	snps_count_inova = 0
+	ins_count_inova = 0
+	del_count_inova = 0
+	other_count_inova = 0
 
 	counter = 0
 	counter_dictionary = {}
+	inova_counter_dictionary = {}
 	thousand_dictionary = {}
+
+	counter_dictionary["Total_snps_original_data"] = [0,0,0]
+	counter_dictionary["Total_ins_original_data"] = [0,0,0]
+	counter_dictionary["Total_del_original_data"] = [0,0,0]
+	counter_dictionary["Total_other_original_data"] = [0,0,0]
+
+	inova_counter_dictionary["Total_snps_original_data_inova"] = [0,0,0]
+	inova_counter_dictionary["Total_ins_original_data_inova"] = [0,0,0]
+	inova_counter_dictionary["Total_del_original_data_inova"] = [0,0,0]
+	inova_counter_dictionary["Total_other_original_data_inova"] = [0,0,0]
+
 	for line in AF_file:
 
 		counter += 1	
@@ -52,12 +69,14 @@ def main(chrom):
 		if len(tp_line[3]) == 1 and len(tp_line[4]) == 1:
 			begin = int(tp_line[1]) - 1
 			dict_key = str(begin)+"_"+tp_line[3]
-			#print dict_key
-			#dict_value_array = []
-			#dict_value_array.append(tp_line[4:])
 			dict_value_array = "_".join(tp_line[4:])
 			freq_dict[dict_key] = dict_value_array
-			snps_count += 1
+			if float(tp_line[5]) > 0.0:
+				snps_count += 1
+				counter_dictionary = add_counts_original_data(float(tp_line[5]), counter_dictionary, "Total_snps_original_data")
+			if float(tp_line[6]) > 0.0:
+				snps_count_inova +=1
+				inova_counter_dictionary = add_counts_original_data(float(tp_line[6]), inova_counter_dictionary, "Total_snps_original_data_inova")
 		#Check to see if this is snp with multiallele
 		elif len(tp_line[3]) == 1 and ',' in tp_line[4]:
 
@@ -70,7 +89,19 @@ def main(chrom):
 
 			#if this is a snp
 			if this_is_snp:
-				snps_count += 1
+				'''
+				if float(tp_line[5]) > 0.0:
+					snps_count += 1
+				if float(tp_line[6]) > 0.0:
+					snps_count_inova +=1
+				'''
+				if float(tp_line[5]) > 0.0:
+					snps_count += 1
+					counter_dictionary = add_counts_original_data(float(tp_line[5]), counter_dictionary, "Total_snps_original_data")
+				if float(tp_line[6]) > 0.0:
+					snps_count_inova +=1
+					inova_counter_dictionary = add_counts_original_data(float(tp_line[6]), inova_counter_dictionary, "Total_snps_original_data_inova")
+
 				begin = int(tp_line[1]) - 1
 				dict_key = str(begin)+"_"+tp_line[3]
 				#dict_value_array = []
@@ -82,7 +113,20 @@ def main(chrom):
 			else:
 				#or maybe other
 				if tp_line[4][0] == tp_line[3]:
-					ins_count += 1
+
+					'''
+					if float(tp_line[5]) > 0.0:
+						ins_count += 1
+					if float(tp_line[6]) > 0.0:
+						ins_count_inova +=1
+					'''
+					if float(tp_line[5]) > 0.0:
+						ins_count += 1
+						counter_dictionary = add_counts_original_data(float(tp_line[5]), counter_dictionary, "Total_ins_original_data")
+					if float(tp_line[6]) > 0.0:
+						ins_count_inova +=1
+						inova_counter_dictionary = add_counts_original_data(float(tp_line[6]), inova_counter_dictionary, "Total_ins_original_data_inova")
+
 					begin = tp_line[1]
 					#Don't even have to trim the alts, we will just look to see if we find it
 					dict_key=begin+"_-"
@@ -91,8 +135,20 @@ def main(chrom):
 					dict_value_array = "_".join(tp_line[4:])
 					freq_dict[dict_key] = dict_value_array
 				else:
-					#Treat it as delin
-					other_count += 1
+					print "indel "+line
+					'''
+					if float(tp_line[5]) > 0.0:
+						other_count += 1
+					if float(tp_line[6]) > 0.0:
+						other_count_inova +=1
+					'''
+					if float(tp_line[5]) > 0.0:
+						other_count += 1
+						counter_dictionary = add_counts_original_data(float(tp_line[5]), counter_dictionary, "Total_other_original_data")
+					if float(tp_line[6]) > 0.0:
+						other_count_inova +=1
+						inova_counter_dictionary = add_counts_original_data(float(tp_line[6]), inova_counter_dictionary, "Total_other_original_data_inova")
+
 					begin = int(tp_line[1]) - 1
 					#Don't even have to trim the alts, we will just look to see if we find it
 					dict_key=str(begin)+"_"+tp_line[3]
@@ -106,7 +162,19 @@ def main(chrom):
 			#Verify that this is a insertion and not a delins, first letter
 			#of the alt is same as the ref
 			if tp_line[4][0] == tp_line[3]:
-				ins_count += 1
+				'''
+				if float(tp_line[5]) > 0.0:
+					ins_count += 1
+				if float(tp_line[6]) > 0.0:
+					ins_count_inova +=1
+				'''
+				if float(tp_line[5]) > 0.0:
+					ins_count += 1
+					counter_dictionary = add_counts_original_data(float(tp_line[5]), counter_dictionary, "Total_ins_original_data")
+				if float(tp_line[6]) > 0.0:
+					ins_count_inova +=1
+					inova_counter_dictionary = add_counts_original_data(float(tp_line[6]), inova_counter_dictionary, "Total_ins_original_data_inova")
+
 				begin = tp_line[1]
 				#Don't even have to trim the alts, we will just look to see if we find it
 				dict_key=begin+"_-"
@@ -116,7 +184,21 @@ def main(chrom):
 				freq_dict[dict_key] = dict_value_array
 			else:
 				#Treat it as delin
-				other_count += 1
+				print "indel "+line
+				'''
+				if float(tp_line[5]) > 0.0:
+					other_count += 1
+				if float(tp_line[6]) > 0.0:
+					other_count_inova +=1
+				'''
+
+				if float(tp_line[5]) > 0.0:
+					other_count += 1
+					counter_dictionary = add_counts_original_data(float(tp_line[5]), counter_dictionary, "Total_other_original_data")
+				if float(tp_line[6]) > 0.0:
+					other_count_inova +=1
+					inova_counter_dictionary = add_counts_original_data(float(tp_line[6]), inova_counter_dictionary, "Total_other_original_data_inova")
+
 				begin = int(tp_line[1]) - 1
 				#Don't even have to trim the alts, we will just look to see if we find it
 				dict_key=str(begin)+"_"+tp_line[3]
@@ -131,7 +213,20 @@ def main(chrom):
 
 			#This also migth be a delin, verify the first character
 			if tp_line[4] == tp_line[3][0]:
-				del_count +=1
+				print "del "+line
+				'''
+				if float(tp_line[5]) > 0.0:
+					del_count += 1
+				if float(tp_line[6]) > 0.0:
+					del_count_inova +=1
+				'''
+				if float(tp_line[5]) > 0.0:
+					del_count += 1
+					counter_dictionary = add_counts_original_data(float(tp_line[5]), counter_dictionary, "Total_del_original_data")
+				if float(tp_line[6]) > 0.0:
+					del_count_inova +=1
+					inova_counter_dictionary = add_counts_original_data(float(tp_line[6]), inova_counter_dictionary, "Total_del_original_data_inova")
+
 				begin = tp_line[1]
 				ref = tp_line[3][1:]
 				dict_key = begin + "_" + ref
@@ -139,14 +234,41 @@ def main(chrom):
 				freq_dict[dict_key] = dict_value_array
 			else:
 				#This is a delin
-				other_count += 1
+				print "indel "+line
+				'''
+				if float(tp_line[5]) > 0.0:
+					other_count += 1
+				if float(tp_line[6]) > 0.0:
+					other_count_inova +=1
+				'''
+
+				if float(tp_line[5]) > 0.0:
+					other_count += 1
+					counter_dictionary = add_counts_original_data(float(tp_line[5]), counter_dictionary, "Total_other_original_data")
+				if float(tp_line[6]) > 0.0:
+					other_count_inova +=1
+					inova_counter_dictionary = add_counts_original_data(float(tp_line[6]), inova_counter_dictionary, "Total_other_original_data_inova")
+
 				begin = int(tp_line[1])-1 
 				dict_key = str(begin) + "_" + tp_line[3]
 				dict_value_array = tp_line[4] + "_"+"_".join(tp_line[5:])
 				freq_dict[dict_key] = dict_value_array
 		#Do some trimming for indels
 		else:
-			other_count += 1
+			print "indel "+line
+			'''
+			if float(tp_line[5]) > 0.0:
+				other_count += 1
+			if float(tp_line[6]) > 0.0:
+				other_count_inova +=1
+			'''
+			if float(tp_line[5]) > 0.0:
+				other_count += 1
+				counter_dictionary = add_counts_original_data(float(tp_line[5]), counter_dictionary, "Total_other_original_data")
+			if float(tp_line[6]) > 0.0:
+				other_count_inova +=1
+				inova_counter_dictionary = add_counts_original_data(float(tp_line[6]), inova_counter_dictionary, "Total_other_original_data_inova")
+
 			begin = int(tp_line[1]) - 1
 			ref = tp_line[3]
 			var = tp_line[4]
@@ -174,11 +296,34 @@ def main(chrom):
 	print "Total ins " + str(ins_count)
 	print "Total del " + str(del_count)
 	print "Total other " + str(other_count)
+	'''
+	counter_dictionary["Total_snps_original_data"] = snps_count
+	counter_dictionary["Total_ins_original_data"] = ins_count
+	counter_dictionary["Total_del_original_data"] = del_count
+	counter_dictionary["Total_other_original_data"] = other_count
+	'''
+	print "Total snps inova " + str(snps_count_inova)
+	print "Total ins inova " + str(ins_count_inova)
+	print "Total del inova " + str(del_count_inova)
+	print "Total other inova " + str(other_count_inova)
+	'''
+	inova_counter_dictionary["Total_snps_original_data_inova"] = snps_count_inova
+	inova_counter_dictionary["Total_ins_original_data_inova"] = ins_count_inova
+	inova_counter_dictionary["Total_del_original_data_inova"] = del_count_inova
+	inova_counter_dictionary["Total_other_original_data_inova"] = other_count_inova
+	'''
+	for key in counter_dictionary:
+		val = counter_dictionary[key]
+		print key
+		for i in val:
+			print str(i)
 
-	#counter_dictionary["Total_snps_original_data"] = snps_count
-	#counter_dictionary["Total_ins_original_data"] = ins_count
-	#counter_dictionary["Total_del_original_data"] = del_count
-	#counter_dictionary["Total_other_original_data"] = other_count
+	for key in inova_counter_dictionary:
+		val = inova_counter_dictionary[key]
+		print key
+		for i in val:
+			print str(i)
+
 
 	#temp_counter = 0
 	line_counter = 0
@@ -200,120 +345,110 @@ def main(chrom):
 			#print "Wellderly AF " + str(wel)
 			#print "Inova AF " + str(inova)
 			#print "Thousand genomes AF " + str(thous)
-			if wel > 0  or inova >0:
+			if wel > 0.0  or inova >0.0:
 
 				splice_site = tp_line[10].replace('///','')
 				splice_site =splice_site.replace('-','')
 
 				if tp_line[3] == "snp":
 					#Count how many snps were found in the annotatio
-					if wel > 0:
+					if wel > 0.0:
 						counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_snps" , wel, thousand_dictionary, thous)
-					if inova > 0:
-						counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_snps" , inova, thousand_dictionary, thous)
+					if inova > 0.0:
+						inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_snps" , inova, thousand_dictionary, thous)
 
 					
 					if 'Nonsense' in tp_line[7]:
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_Nonsense" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_Nonsense" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_Nonsense" , inova, thousand_dictionary, thous)
 
 
 					elif not splice_site == '':
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_splice_site" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_splice_site" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_splice_site" , inova, thousand_dictionary, thous)
 
 					elif 'Nonsynonymous' in tp_line[7]:
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_Nonsynonymous" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_Nonsynonymous" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_Nonsynonymous" , inova, thousand_dictionary, thous)
 
 					elif 'Synonymous' in tp_line[7]:
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_Synonymous" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_Synonymous" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_Synonymous" , inova, thousand_dictionary, thous)
 
 					elif 'Intron' in tp_line[9]:
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_Intron" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_Intron" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_Intron" , inova, thousand_dictionary, thous)
 
-					elif 'Exon' in tp_line[9] or 'Intron' in tp_line[9]:
-						continue
-					#if it was neither Exon or Intron in location, this must be intergenic	
 					else:
 						#print "intergenic? "+ tp_line[9]
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_Intergenic" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_Intergenic" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_Intergenic" , inova, thousand_dictionary, thous)
 
 
 				else:
 					if tp_line[3] == "ins":
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_ins" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_ins" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_ins" , inova, thousand_dictionary, thous)
 
 					elif tp_line[3] == "del":
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_del" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_del" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_del" , inova, thousand_dictionary, thous)
 
 					else:
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_indel" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_indel" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_indel" , inova, thousand_dictionary, thous)
 
 
 					if 'Frameshift' in tp_line[7]:
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_complex_frameshift" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_complex_frameshift" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_complex_frameshift" , inova, thousand_dictionary, thous)
 
 
 					elif 'In_Frame' in tp_line[7]:
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_complex_inFrame" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_complex_inFrame" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_complex_inFrame" , inova, thousand_dictionary, thous)
 
 					elif not splice_site == '':
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_complex_SpliceSite" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_complex_SpliceSite" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_complex_SpliceSite" , inova, thousand_dictionary, thous)
 
 
 					elif 'Intron' in tp_line[9]:
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_complex_Intron" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_complex_Intron" , inova, thousand_dictionary, thous)
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_complex_Intron" , inova, thousand_dictionary, thous)
 					
-					elif 'Exon' in tp_line[9] or 'Intron' in tp_line[9]:
-						continue
-
 					else:
-						if wel > 0:
+						if wel > 0.0:
 							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "well_complex_Intergenic" , wel, thousand_dictionary, thous)
-						if inova > 0:
-							counter_dictionary, thousand_dictionary = add_counts(counter_dictionary, "inova_complex_Intergenic" , inova, thousand_dictionary, thous)
-					
-
-					
-
-
+						if inova > 0.0:
+							inova_counter_dictionary, thousand_dictionary = add_counts(inova_counter_dictionary, "inova_complex_Intergenic" , inova, thousand_dictionary, thous)
+				
 		afile.close()
 
 	counter_line = ""
@@ -326,10 +461,20 @@ def main(chrom):
 			print str(i)
 		counter_line = counter_line + "\n"
 
+	for key in inova_counter_dictionary:
+		val = inova_counter_dictionary[key]
+		counter_line = counter_line+ chrom +"\t"+key
+		print key
+		for i in val:
+			counter_line = counter_line + "\t" + str(i)
+			print str(i)
+		counter_line = counter_line + "\n"
+
 	counter_file = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/annotations/table2.counter.final", 'a')
 	counter_file.write(counter_line)
 	counter_file.close()
 	
+	'''
 	thousand_line = ""
 	for key in thousand_dictionary:
 		val = thousand_dictionary[key]
@@ -350,7 +495,8 @@ def main(chrom):
 	counter_file = open("/gpfs/group/stsi/data/projects/wellderly/GenomeComb/annotations/table2.counter.thousandG", 'a')
 	counter_file.write(thousand_line)
 	counter_file.close()
-
+	'''
+	
 	#Check to see if there are any variants that weren't found in annotation
 	counter_not_found = 0
 	for dict_key in freq_dict.keys():
@@ -383,8 +529,9 @@ def check_presence_in_filtered_dataset(tp_line, thousand_af, freq_dict):
 			#print "annotation alt " + annotation_alt
 			#print "alt " + alt
 
-			welld_found = float(tp_found[1]) 
 			inova_found = float(tp_found[2])
+			welld_found = float(tp_found[1]) 
+			
 			#print "Wellderly AF " + str(welld_found)
 			#print "Inova AF " + str(inova_found)
 			#remove this entry from the dictionary so the multiple alleles
@@ -416,6 +563,26 @@ def check_presence_in_filtered_dataset(tp_line, thousand_af, freq_dict):
 			novel = True
 
 	return welld_found, inova_found, novel, freq_dict
+
+def add_counts_original_data(alle_freq, counts_dict, dict_key):
+
+	count_array = counts_dict[dict_key]
+
+	if alle_freq < 0.01:
+		new_freq = count_array[0] + 1
+		count_array[0] = new_freq
+
+	elif alle_freq < 0.05:
+		new_freq = count_array[1] + 1
+		count_array[1] = new_freq
+
+	else:
+		new_freq = count_array[2] + 1
+		count_array[2] = new_freq
+
+	counts_dict[dict_key] = count_array
+	return counts_dict
+
 
 def add_counts(counts_dict, dict_key, alle_freq, thousandg_dict, novel):
 	#Extract the count array if this is not the first round
